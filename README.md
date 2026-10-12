@@ -1,6 +1,6 @@
-# React + Vite
+# Productivity Quest
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This template provides a minimal setup to get Productivity Quest working in Vite with HMR and some ESLint rules.
 
 Currently, two official plugins are available:
 
