@@ -3,6 +3,7 @@ import { useProductivity } from "../store/ProductivityContext";
 import { CATEGORIES, categoryLabel } from "../lib/constants";
 import { todayKey, lastNDays } from "../lib/questLogic";
 import SectionCard from "./SectionCard";
+import ConfirmDialog from "./ConfirmDialog";
 import { FlameIcon, PlusIcon, CheckIcon, TrashIcon } from "./icons";
 
 const Habits = () => {
@@ -11,6 +12,7 @@ const Habits = () => {
   const [category, setCategory] = useState("Health");
   const [target, setTarget] = useState(7);
   const [showForm, setShowForm] = useState(false);
+  const [confirmHabit, setConfirmHabit] = useState(null);
 
   const today = todayKey();
   const week = lastNDays(7);
@@ -24,10 +26,14 @@ const Habits = () => {
     setShowForm(false);
   };
 
-  const checkIn = (h) => {
-    if ((h.history || []).includes(today)) return;
+  const commitCheckIn = (h) => {
     completeHabit(h.id);
     notify(`+8 XP · ${h.name}`);
+  };
+
+  const checkIn = (h) => {
+    if ((h.history || []).includes(today)) return;
+    setConfirmHabit(h);
   };
 
   return (
@@ -145,6 +151,21 @@ const Habits = () => {
           })}
         </div>
       )}
+
+      <ConfirmDialog
+        open={!!confirmHabit}
+        title="Check-in kebiasaan?"
+        message={
+          confirmHabit
+            ? `Catat "${confirmHabit.name}" untuk hari ini? Kamu mendapat +8 XP.`
+            : ""
+        }
+        onCancel={() => setConfirmHabit(null)}
+        onConfirm={() => {
+          commitCheckIn(confirmHabit);
+          setConfirmHabit(null);
+        }}
+      />
     </SectionCard>
   );
 };

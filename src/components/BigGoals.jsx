@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useProductivity } from "../store/ProductivityContext";
 import { PRIORITY_THEME, CATEGORIES, categoryLabel } from "../lib/constants";
 import SectionCard from "./SectionCard";
+import ConfirmDialog from "./ConfirmDialog";
 import { TargetIcon, PlusIcon, TrashIcon, CheckIcon } from "./icons";
 
 const BigGoals = () => {
@@ -25,6 +26,7 @@ const BigGoals = () => {
   const [steps, setSteps] = useState("");
   const [drafts, setDrafts] = useState({});
   const [editingId, setEditingId] = useState(null);
+  const [confirmSub, setConfirmSub] = useState(null);
 
   const submit = (e) => {
     e.preventDefault();
@@ -60,9 +62,9 @@ const BigGoals = () => {
     setDrafts((d) => ({ ...d, [goalId]: "" }));
   };
 
-  const toggle = (goal, subtask) => {
+  const commitToggle = (goal, subtask) => {
     const others = (goal.subtasks || []).filter((t) => t.id !== subtask.id);
-    const willComplete = !subtask.done && subtask && others.every((t) => t.done) && others.length > 0;
+    const willComplete = !subtask.done && others.every((t) => t.done) && others.length > 0;
     toggleSubtask(goal.id, subtask.id);
 
     if (subtask.done) {
@@ -73,6 +75,18 @@ const BigGoals = () => {
       notify(`+5 XP · ${subtask.title}`);
     }
   };
+
+  const toggle = (goal, subtask) => {
+    if (subtask.done) commitToggle(goal, subtask);
+    else setConfirmSub({ goal, subtask });
+  };
+
+  const subWillComplete =
+    confirmSub &&
+    (confirmSub.goal.subtasks || []).length > 1 &&
+    (confirmSub.goal.subtasks || [])
+      .filter((t) => t.id !== confirmSub.subtask.id)
+      .every((t) => t.done);
 
   return (
     <SectionCard
@@ -308,6 +322,24 @@ const BigGoals = () => {
           })}
         </div>
       )}
+
+      <ConfirmDialog
+        open={!!confirmSub}
+        title={subWillComplete ? "Tuntaskan tujuan?" : "Selesaikan langkah?"}
+        message={
+          confirmSub
+            ? subWillComplete
+              ? `"${confirmSub.subtask.title}" langkah terakhir. Tujuan "${confirmSub.goal.title}" akan tuntas (+${confirmSub.goal.xpReward} XP).`
+              : `Tandai langkah "${confirmSub.subtask.title}" selesai? (+5 XP)`
+            : ""
+        }
+        confirmLabel={subWillComplete ? "Ya, tuntaskan" : "Ya, selesaikan"}
+        onCancel={() => setConfirmSub(null)}
+        onConfirm={() => {
+          commitToggle(confirmSub.goal, confirmSub.subtask);
+          setConfirmSub(null);
+        }}
+      />
     </SectionCard>
   );
 };

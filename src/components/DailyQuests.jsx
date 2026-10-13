@@ -3,6 +3,7 @@ import { useProductivity } from "../store/ProductivityContext";
 import { QUEST_THEME, CATEGORIES, categoryLabel } from "../lib/constants";
 import { todayKey } from "../lib/questLogic";
 import SectionCard from "./SectionCard";
+import ConfirmDialog from "./ConfirmDialog";
 import { SwordIcon, PlusIcon, CheckIcon, TrashIcon } from "./icons";
 
 const DailyQuests = () => {
@@ -11,6 +12,7 @@ const DailyQuests = () => {
   const [title, setTitle] = useState("");
   const [difficulty, setDifficulty] = useState("easy");
   const [category, setCategory] = useState("Work");
+  const [confirmQuest, setConfirmQuest] = useState(null);
 
   const today = todayKey();
   const todays = dailyQuests.filter((q) => q.date === today);
@@ -24,11 +26,16 @@ const DailyQuests = () => {
     setTitle("");
   };
 
-  const toggle = (q) => {
+  const commitToggle = (q) => {
     toggleDailyQuest(q.id);
     notify(
       `${q.completed ? "-" : "+"}${q.xpReward} XP · misi ${q.completed ? "dibuka lagi" : "selesai"}`
     );
+  };
+
+  const toggle = (q) => {
+    if (q.completed) commitToggle(q);
+    else setConfirmQuest(q);
   };
 
   return (
@@ -168,6 +175,21 @@ const DailyQuests = () => {
           </div>
         </details>
       )}
+
+      <ConfirmDialog
+        open={!!confirmQuest}
+        title="Selesaikan misi?"
+        message={
+          confirmQuest
+            ? `"${confirmQuest.title}" akan ditandai selesai dan kamu mendapat +${confirmQuest.xpReward} XP.`
+            : ""
+        }
+        onCancel={() => setConfirmQuest(null)}
+        onConfirm={() => {
+          commitToggle(confirmQuest);
+          setConfirmQuest(null);
+        }}
+      />
     </SectionCard>
   );
 };
