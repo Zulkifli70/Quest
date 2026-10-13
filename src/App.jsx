@@ -6,7 +6,7 @@ import DailyQuests from "./components/DailyQuests";
 import Habits from "./components/Habits";
 import BigGoals from "./components/BigGoals";
 import ToastHost from "./components/Toast";
-import DevTreeOverlay from "./dev/ComponentTree";
+import Help from "./components/Help";
 
 const Dashboard = () => {
   const [tab, setTab] = useState("quests");
@@ -45,7 +45,7 @@ const Dashboard = () => {
 const App = () => (
   <ProductivityProvider>
     <Dashboard />
-    <DevTreeOverlay />
+    <Help />
   </ProductivityProvider>
 );
 

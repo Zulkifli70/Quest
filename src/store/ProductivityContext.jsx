@@ -10,83 +10,6 @@ const ProductivityContext = createContext(null);
 const HABIT_XP = 8;
 const SUBTASK_XP = 5;
 
-const seedState = () => {
-  const today = todayKey();
-  return {
-    ...DEFAULT_STATE,
-    dailyQuests: [
-      {
-        id: uid(),
-        title: "Minum air 2L",
-        description: "Jaga hidrasi sepanjang hari",
-        date: today,
-        completed: false,
-        xpReward: QUEST_THEME.easy.xp,
-        difficulty: "easy",
-        category: "Health",
-        createdAt: new Date().toISOString(),
-      },
-      {
-        id: uid(),
-        title: "Selesaikan proposal proyek",
-        description: "Susun draf dan kerangka roadmap Q3",
-        date: today,
-        completed: false,
-        xpReward: QUEST_THEME.hard.xp,
-        difficulty: "hard",
-        category: "Work",
-        createdAt: new Date().toISOString(),
-      },
-    ],
-    habits: [
-      {
-        id: uid(),
-        name: "Lari pagi",
-        description: "Jogging 30 menit",
-        targetFrequency: 7,
-        history: [],
-        category: "Health",
-        isActive: true,
-      },
-    ],
-    bigGoals: [
-      {
-        id: uid(),
-        title: "Persiapan wawancara",
-        description: "Dapatkan posisi frontend — belajar, latihan, dan membangun",
-        targetDate: new Date(Date.now() + 45 * 86400000).toISOString().slice(0, 10),
-        currentProgress: 0,
-        priority: "high",
-        xpReward: 300,
-        category: "Learning",
-        completed: false,
-        subtasks: [
-          { id: uid(), title: "Pelajari DSA", done: true },
-          { id: uid(), title: "Pelajari fungsi JS", done: false },
-          { id: uid(), title: "Pelajari pembuatan UI", done: false },
-          { id: uid(), title: "Simulasi wawancara", done: false },
-        ],
-      },
-      {
-        id: uid(),
-        title: "Rilis aplikasi produktivitas",
-        description: "Luncurkan aplikasi produktivitas bertema misi v1",
-        targetDate: new Date(Date.now() + 90 * 86400000).toISOString().slice(0, 10),
-        currentProgress: 0,
-        priority: "medium",
-        xpReward: 500,
-        category: "Work",
-        completed: false,
-        subtasks: [
-          { id: uid(), title: "Model data inti", done: true },
-          { id: uid(), title: "UI misi", done: true },
-          { id: uid(), title: "Simpan data & poles", done: false },
-        ],
-      },
-    ],
-  };
-};
-
 const loadState = () => {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
@@ -105,7 +28,7 @@ const loadState = () => {
   } catch {
     /* ignore */
   }
-  return seedState();
+  return { ...DEFAULT_STATE };
 };
 
 export const ProductivityProvider = ({ children }) => {
@@ -273,7 +196,7 @@ export const ProductivityProvider = ({ children }) => {
       deleteBigGoal: (id) =>
         setState((s) => ({ ...s, bigGoals: s.bigGoals.filter((g) => g.id !== id) })),
 
-      resetAll: () => setState(seedState()),
+      resetAll: () => setState({ ...DEFAULT_STATE }),
 
       gainXP: (amount) =>
         setState((s) => ({ ...s, totalXP: Math.max(0, s.totalXP + amount) })),

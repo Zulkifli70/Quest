@@ -67,6 +67,13 @@
 
 /* ---------- Base ---------- */
 
+@font-face {
+  font-family: "Retro";
+  src: url("/fonts/Retro-Gaming.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+}
+
 * {
   box-sizing: border-box;
 }
@@ -80,7 +87,7 @@ body {
   min-height: 100vh;
   background: var(--bg);
   color: var(--text);
-  font-family: "Pixelify Sans", "Courier New", monospace;
+  font-family: "Retro", "Courier New", monospace;
   font-size: 17px;
   line-height: 1.5;
   -webkit-font-smoothing: none;
@@ -347,6 +354,115 @@ button {
   padding: 10px 14px;
   font-family: "Press Start 2P", monospace;
   font-size: 9px;
+}
+
+/* ---------- Help ---------- */
+
+.help-fab {
+  position: fixed;
+  right: 16px;
+  bottom: calc(16px + env(safe-area-inset-bottom));
+  z-index: 60;
+  width: 48px;
+  height: 48px;
+  display: grid;
+  place-items: center;
+  background: var(--gold);
+  color: var(--ink);
+  border: 4px solid var(--ink);
+  box-shadow: 3px 3px 0 var(--ink);
+  font-family: "Press Start 2P", monospace;
+  font-size: 16px;
+  transition:
+    transform 0.12s steps(2),
+    box-shadow 0.12s steps(2);
+}
+
+.help-fab:active {
+  transform: translate(3px, 3px);
+  box-shadow: none;
+}
+
+.help-fab:focus-visible {
+  outline: 3px solid var(--gold);
+  outline-offset: 2px;
+}
+
+.help-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  background: rgba(4, 6, 10, 0.72);
+}
+
+.help-drawer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 61;
+  width: min(380px, 92vw);
+  display: flex;
+  flex-direction: column;
+  background: var(--panel);
+  border-left: 4px solid var(--ink);
+  box-shadow: -6px 0 0 var(--ink);
+}
+
+.help-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 16px;
+  background: var(--panel2);
+  border-bottom: 2px dashed var(--ink);
+}
+
+.help-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px;
+}
+
+.help-body h3 {
+  margin: 0 0 8px;
+  font-family: "Press Start 2P", monospace;
+  font-size: 9px;
+  line-height: 1.6;
+  color: var(--gold);
+}
+
+.help-body section + section {
+  margin-top: 18px;
+}
+
+.help-body p,
+.help-body li {
+  margin: 0;
+  font-size: 15px;
+}
+
+.help-body ul {
+  margin: 8px 0 0;
+  padding-left: 20px;
+}
+
+.help-body li + li {
+  margin-top: 4px;
+}
+
+.help-body b {
+  color: var(--gold);
+  font-weight: 600;
+}
+
+.help-body code {
+  background: var(--ink);
+  color: var(--gold);
+  padding: 2px 4px;
+  font-family: "Courier New", monospace;
+  font-size: 13px;
 }
 
 /* ---------- Motion ---------- */
