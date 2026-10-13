@@ -97,7 +97,7 @@ const BigGoals = () => {
       countLabel="tujuan aktif"
       action={
         <button
-          className="btn btn-icon"
+          className="btn btn-icon btn-primary"
           onClick={() => setShowForm((s) => !s)}
           aria-label="Tambah tujuan besar"
           aria-expanded={showForm}

@@ -7,7 +7,8 @@ import ConfirmDialog from "./ConfirmDialog";
 import { FlameIcon, PlusIcon, CheckIcon, TrashIcon } from "./icons";
 
 const Habits = () => {
-  const { habits, addHabit, completeHabit, deleteHabit, notify } = useProductivity();
+  const { habits, addHabit, completeHabit, deleteHabit, notify } =
+    useProductivity();
   const [name, setName] = useState("");
   const [category, setCategory] = useState("Health");
   const [target, setTarget] = useState(7);
@@ -44,7 +45,7 @@ const Habits = () => {
       countLabel="kebiasaan"
       action={
         <button
-          className="btn btn-icon"
+          className="btn btn-icon btn-primary"
           onClick={() => setShowForm((s) => !s)}
           aria-label="Tambah kebiasaan"
           aria-expanded={showForm}
@@ -121,7 +122,9 @@ const Habits = () => {
                   onClick={() => checkIn(h)}
                   disabled={doneToday}
                   aria-pressed={doneToday}
-                  aria-label={doneToday ? "Sudah check-in hari ini" : `Check-in ${h.name}`}
+                  aria-label={
+                    doneToday ? "Sudah check-in hari ini" : `Check-in ${h.name}`
+                  }
                 >
                   <CheckIcon className="h-4 w-4" />
                 </button>
@@ -133,7 +136,10 @@ const Habits = () => {
                         <span key={i} className="dot" data-on={i < filled} />
                       ))}
                     </span>
-                    <span className="pixel text-[8px]" style={{ color: "var(--mute)" }}>
+                    <span
+                      className="pixel text-[8px]"
+                      style={{ color: "var(--mute)" }}
+                    >
                       {count}/{h.targetFrequency} minggu ini
                     </span>
                   </div>
