@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useMemo, useState } from "react";
+import { createContext, useContext, useEffect, useMemo, useRef, useState } from "react";
 import { DEFAULT_STATE, QUEST_THEME } from "../lib/constants";
 import { uid, todayKey, levelFromXP } from "../lib/questLogic";
 
@@ -34,6 +34,8 @@ const loadState = () => {
 export const ProductivityProvider = ({ children }) => {
   const [state, setState] = useState(loadState);
   const [toast, setToast] = useState(null);
+  const [levelUp, setLevelUp] = useState(null);
+  const prevLevel = useRef(levelFromXP(state.totalXP).level);
 
   useEffect(() => {
     try {
@@ -49,12 +51,20 @@ export const ProductivityProvider = ({ children }) => {
     return () => clearTimeout(t);
   }, [toast]);
 
+  useEffect(() => {
+    const level = levelFromXP(state.totalXP).level;
+    if (level > prevLevel.current) setLevelUp({ level });
+    prevLevel.current = level;
+  }, [state.totalXP]);
+
   const value = useMemo(() => {
     return {
       ...state,
       levelInfo: levelFromXP(state.totalXP),
       toast,
       notify: (message) => setToast({ id: uid(), message }),
+      levelUp,
+      dismissLevelUp: () => setLevelUp(null),
 
       addDailyQuest: ({ title, description = "", difficulty = "easy", category = "Personal" }) =>
         setState((s) => ({
@@ -201,7 +211,7 @@ export const ProductivityProvider = ({ children }) => {
       gainXP: (amount) =>
         setState((s) => ({ ...s, totalXP: Math.max(0, s.totalXP + amount) })),
     };
-  }, [state, toast]);
+  }, [state, toast, levelUp]);
 
   return (
     <ProductivityContext.Provider value={value}>{children}</ProductivityContext.Provider>
