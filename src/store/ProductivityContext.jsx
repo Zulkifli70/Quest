@@ -1,11 +1,13 @@
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
-import { DEFAULT_STATE, QUEST_THEME, PRIORITY_THEME } from "../lib/constants";
-import { uid, todayKey, computeStreak, levelFromXP } from "../lib/questLogic";
+import { DEFAULT_STATE, QUEST_THEME } from "../lib/constants";
+import { uid, todayKey, levelFromXP } from "../lib/questLogic";
 
 /* eslint-disable react-refresh/only-export-components */
 const STORAGE_KEY = "zulk-coin:productivity:v1";
 
 const ProductivityContext = createContext(null);
+
+const HABIT_XP = 8;
 
 const seedState = () => {
   const today = todayKey();
@@ -41,10 +43,7 @@ const seedState = () => {
         name: "Morning run",
         description: "30 minutes jog",
         targetFrequency: 7,
-        currentStreak: 3,
-        longestStreak: 12,
-        totalCompletions: 41,
-        lastCompleted: null,
+        history: [],
         category: "Health",
         isActive: true,
       },
@@ -82,6 +81,7 @@ const loadState = () => {
 
 export const ProductivityProvider = ({ children }) => {
   const [state, setState] = useState(loadState);
+  const [toast, setToast] = useState(null);
 
   useEffect(() => {
     try {
@@ -91,11 +91,18 @@ export const ProductivityProvider = ({ children }) => {
     }
   }, [state]);
 
+  useEffect(() => {
+    if (!toast) return undefined;
+    const t = setTimeout(() => setToast(null), 2000);
+    return () => clearTimeout(t);
+  }, [toast]);
+
   const value = useMemo(() => {
     return {
       ...state,
       levelInfo: levelFromXP(state.totalXP),
-      priorityTheme: PRIORITY_THEME,
+      toast,
+      notify: (message) => setToast({ id: uid(), message }),
 
       addDailyQuest: ({ title, description = "", difficulty = "easy", category = "Personal" }) =>
         setState((s) => ({
@@ -139,10 +146,7 @@ export const ProductivityProvider = ({ children }) => {
               name,
               description,
               targetFrequency,
-              currentStreak: 0,
-              longestStreak: 0,
-              totalCompletions: 0,
-              lastCompleted: null,
+              history: [],
               category,
               isActive: true,
             },
@@ -153,19 +157,15 @@ export const ProductivityProvider = ({ children }) => {
       completeHabit: (id) =>
         setState((s) => {
           const today = todayKey();
+          let gained = 0;
           const habits = s.habits.map((h) => {
             if (h.id !== id) return h;
-            if (h.lastCompleted === today) return h;
-            const streak = computeStreak(h.lastCompleted, h.currentStreak, today);
-            return {
-              ...h,
-              currentStreak: streak,
-              longestStreak: Math.max(h.longestStreak, streak),
-              totalCompletions: h.totalCompletions + 1,
-              lastCompleted: today,
-            };
+            const history = h.history || [];
+            if (history.includes(today)) return h;
+            gained = HABIT_XP;
+            return { ...h, history: [...history, today] };
           });
-          return { ...s, habits, totalXP: s.totalXP + 15 };
+          return { ...s, habits, totalXP: s.totalXP + gained };
         }),
 
       deleteHabit: (id) =>
@@ -246,11 +246,12 @@ export const ProductivityProvider = ({ children }) => {
       deleteBigGoal: (id) =>
         setState((s) => ({ ...s, bigGoals: s.bigGoals.filter((g) => g.id !== id) })),
 
-        resetAll: () => setState(seedState()),
-        gainXP: (amount) =>
-          setState((s) => ({ ...s, totalXP: Math.max(0, s.totalXP + amount) })),
+      resetAll: () => setState(seedState()),
+
+      gainXP: (amount) =>
+        setState((s) => ({ ...s, totalXP: Math.max(0, s.totalXP + amount) })),
     };
-  }, [state]);
+  }, [state, toast]);
 
   return (
     <ProductivityContext.Provider value={value}>{children}</ProductivityContext.Provider>

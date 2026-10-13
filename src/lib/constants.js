@@ -1,34 +1,13 @@
 export const QUEST_THEME = {
-  easy: {
-    label: "Easy",
-    xp: 10,
-    accent: "text-emerald-300",
-    ring: "border-emerald-500/40",
-    badge: "bg-emerald-500/15 text-emerald-300",
-    glow: "shadow-emerald-500/20",
-  },
-  medium: {
-    label: "Medium",
-    xp: 25,
-    accent: "text-amber-300",
-    ring: "border-amber-500/40",
-    badge: "bg-amber-500/15 text-amber-300",
-    glow: "shadow-amber-500/20",
-  },
-  hard: {
-    label: "Hard",
-    xp: 50,
-    accent: "text-rose-300",
-    ring: "border-rose-500/40",
-    badge: "bg-rose-500/15 text-rose-300",
-    glow: "shadow-rose-500/20",
-  },
+  easy: { label: "Easy", xp: 10, color: "var(--good)" },
+  medium: { label: "Medium", xp: 25, color: "var(--gold)" },
+  hard: { label: "Hard", xp: 50, color: "var(--ember)" },
 };
 
 export const PRIORITY_THEME = {
-  low: { label: "Low", badge: "bg-sky-500/15 text-sky-300", bar: "bg-sky-400" },
-  medium: { label: "Medium", badge: "bg-amber-500/15 text-amber-300", bar: "bg-amber-400" },
-  high: { label: "High", badge: "bg-rose-500/15 text-rose-300", bar: "bg-rose-400" },
+  low: { label: "Low", color: "var(--mute)" },
+  medium: { label: "Medium", color: "var(--gold)" },
+  high: { label: "High", color: "var(--ember)" },
 };
 
 export const CATEGORIES = ["Work", "Health", "Learning", "Personal", "Finance"];

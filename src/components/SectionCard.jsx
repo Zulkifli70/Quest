@@ -1,20 +1,23 @@
-const SectionCard = ({ title, icon, count, countLabel, accent, action, children }) => (
-  <section className="flex flex-col rounded-3xl border border-slate-700/60 bg-slate-900/70 shadow-xl">
-    <div className="flex items-center justify-between gap-3 border-b border-slate-700/60 px-5 py-4">
+const SectionCard = ({ title, icon, count, countLabel, action, children }) => (
+  <section className="panel">
+    <div
+      className="mb-4 flex items-center justify-between gap-3 border-b-2 border-dashed pb-3"
+      style={{ borderColor: "var(--ink)" }}
+    >
       <div className="flex items-center gap-3">
-        <div className={`grid h-10 w-10 place-items-center rounded-xl ${accent}`}>
-          {icon}
-        </div>
+        <span style={{ color: "var(--gold)" }}>{icon}</span>
         <div>
-          <h2 className="text-base font-bold text-slate-100">{title}</h2>
-          <p className="text-xs text-slate-400">
+          <h2 className="pixel text-[10px]" style={{ color: "var(--gold)" }}>
+            {title}
+          </h2>
+          <p className="mt-1 text-[13px]" style={{ color: "var(--mute)" }}>
             {count} {countLabel}
           </p>
         </div>
       </div>
       {action}
     </div>
-    <div className="flex-1 p-5">{children}</div>
+    {children}
   </section>
 );
 

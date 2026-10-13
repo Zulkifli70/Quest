@@ -1,40 +1,124 @@
-import {
-  FireIcon as FlameIconRaw,
-  TrashIcon as Trash,
-  ChevronDownIcon as ChevronDown,
-  ChevronUpIcon as ChevronUp,
-  CalendarIcon as Calendar,
-  StarIcon as Star,
-  PlusIcon as Plus,
-  BoltIcon as Bolt,
-  CheckIcon as Check,
-} from "@heroicons/react/24/solid";
-import { Swords } from "./custom/Swords";
-import { TargetIcon as Target } from "./custom/Target";
+/* 8x8 pixel glyphs drawn as SVG rects (design.md §4). */
 
-export const Icon = ({ className = "h-5 w-5", ...props }) => (
+const ART = {
+  sword: [
+    "...##...",
+    "...##...",
+    "...##...",
+    "...##...",
+    "########",
+    "...##...",
+    "...##...",
+    "..####..",
+  ],
+  flame: [
+    "....#...",
+    "...##...",
+    "..###.#.",
+    ".####.##",
+    ".#######",
+    ".######.",
+    "..####..",
+    "...##...",
+  ],
+  check: [
+    "........",
+    ".......#",
+    "......##",
+    "#....##.",
+    "##..##..",
+    ".####...",
+    "..##....",
+    "........",
+  ],
+  plus: [
+    "...##...",
+    "...##...",
+    "...##...",
+    "########",
+    "########",
+    "...##...",
+    "...##...",
+    "...##...",
+  ],
+  trash: [
+    "..####..",
+    ".######.",
+    "########",
+    "#.#..#.#",
+    "#.#..#.#",
+    "#.#..#.#",
+    "#.#..#.#",
+    ".######.",
+  ],
+  target: [
+    "########",
+    "#......#",
+    "#..##..#",
+    "#.####.#",
+    "#.####.#",
+    "#..##..#",
+    "#......#",
+    "########",
+  ],
+  star: [
+    "...#....",
+    "...#....",
+    "#######.",
+    ".#####..",
+    "..###...",
+    ".##.##..",
+    ".#...#..",
+    "........",
+  ],
+  zap: [
+    "....###.",
+    "...###..",
+    "..###...",
+    ".#####..",
+    "...###..",
+    "..###...",
+    ".###....",
+    "##......",
+  ],
+  chevron: [
+    "#......#",
+    "##....##",
+    ".##..##.",
+    "..####..",
+    "...##...",
+    "........",
+    "........",
+    "........",
+  ],
+};
+
+const Pixel = ({ art, className = "h-5 w-5", ...props }) => (
   <svg
-    xmlns="http://www.w3.org/2000/svg"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
+    viewBox="0 0 8 8"
     className={className}
+    shapeRendering="crispEdges"
+    fill="currentColor"
     aria-hidden="true"
     {...props}
-  />
+  >
+    {art.map((row, y) =>
+      [...row].map((cell, x) =>
+        cell !== "." ? <rect key={`${x}-${y}`} x={x} y={y} width="1" height="1" /> : null
+      )
+    )}
+  </svg>
 );
 
-export const SwordIcon = (props) => <Swords className={props.className} {...props} />;
-export const FlameIcon = (props) => <FlameIconRaw className={props.className} {...props} />;
-export const TargetIcon = (props) => <Target className={props.className} {...props} />;
-export const PlusIcon = (props) => <Plus className={props.className} {...props} />;
-export const CheckIcon = (props) => <Check className={props.className} {...props} />;
-export const TrashIcon = (props) => <Trash className={props.className} {...props} />;
-export const StarIcon = (props) => <Star className={props.className} {...props} />;
-export const ZapIcon = (props) => <Bolt className={props.className} {...props} />;
-export const ChevronDownIcon = (props) => <ChevronDown className={props.className} {...props} />;
-export const ChevronUpIcon = (props) => <ChevronUp className={props.className} {...props} />;
-export const CalendarIcon = (props) => <Calendar className={props.className} {...props} />;
+export const SwordIcon = (props) => <Pixel art={ART.sword} {...props} />;
+export const FlameIcon = (props) => <Pixel art={ART.flame} {...props} />;
+export const CheckIcon = (props) => <Pixel art={ART.check} {...props} />;
+export const PlusIcon = (props) => <Pixel art={ART.plus} {...props} />;
+export const TrashIcon = (props) => <Pixel art={ART.trash} {...props} />;
+export const TargetIcon = (props) => <Pixel art={ART.target} {...props} />;
+export const StarIcon = (props) => <Pixel art={ART.star} {...props} />;
+export const ZapIcon = (props) => <Pixel art={ART.zap} {...props} />;
+export const ChevronDownIcon = (props) => <Pixel art={ART.chevron} {...props} />;
+export const ChevronUpIcon = (props) => (
+  <Pixel art={ART.chevron} {...props} className={`${props.className || "h-5 w-5"} rotate-180`} />
+);

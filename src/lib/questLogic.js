@@ -15,28 +15,27 @@ export const daysBetween = (fromKey, toKey) => {
   return Math.round((b - a) / 86400000);
 };
 
-export const xpNeededForLevel = (level) => 100 + (level - 1) * 50;
-
-export const levelFromXP = (xp) => {
-  let level = 1;
-  let remaining = Math.max(0, xp);
-  while (remaining >= xpNeededForLevel(level)) {
-    remaining -= xpNeededForLevel(level);
-    level += 1;
+export const lastNDays = (n, from = new Date()) => {
+  const keys = [];
+  for (let i = 0; i < n; i += 1) {
+    const d = new Date(from);
+    d.setDate(d.getDate() - i);
+    keys.push(todayKey(d));
   }
-  const needed = xpNeededForLevel(level);
-  return {
-    level,
-    current: remaining,
-    needed,
-    progress: needed === 0 ? 0 : Math.round((remaining / needed) * 100),
-  };
+  return keys;
 };
 
-export const computeStreak = (lastCompleted, currentStreak, today = todayKey()) => {
-  if (!lastCompleted) return 1;
-  const gap = daysBetween(lastCompleted, today);
-  if (gap === 0) return currentStreak;
-  if (gap === 1) return currentStreak + 1;
-  return 1;
+export const LEVEL_STEP = 100;
+
+/* Level = floor(XP / 100) + 1 (design.md §5) */
+export const levelFromXP = (xp) => {
+  const safe = Math.max(0, xp);
+  const level = Math.floor(safe / LEVEL_STEP) + 1;
+  const current = safe % LEVEL_STEP;
+  return {
+    level,
+    current,
+    needed: LEVEL_STEP,
+    progress: current,
+  };
 };

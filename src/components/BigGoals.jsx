@@ -2,7 +2,9 @@ import { useState } from "react";
 import { useProductivity } from "../store/ProductivityContext";
 import { PRIORITY_THEME, CATEGORIES } from "../lib/constants";
 import SectionCard from "./SectionCard";
-import { TargetIcon, TrashIcon, ChevronDownIcon, FlameIcon, ZapIcon } from "./icons";
+import { TargetIcon, PlusIcon, TrashIcon, CheckIcon, FlameIcon } from "./icons";
+
+const clamp = (n) => Math.min(100, Math.max(0, n));
 
 const BigGoals = () => {
   const {
@@ -11,85 +13,105 @@ const BigGoals = () => {
     toggleMilestone,
     addBigGoal,
     deleteBigGoal,
-    gainXP,
+    notify,
   } = useProductivity();
+
   const [showForm, setShowForm] = useState(false);
-  const [newTitle, setNewTitle] = useState("");
-  const [newDesc, setNewDesc] = useState("");
-  const [newDate, setNewDate] = useState("");
-  const [newPriority, setNewPriority] = useState("medium");
-  const [newXP, setNewXP] = useState(300);
-  const [newCategory, setNewCategory] = useState("Work");
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [targetDate, setTargetDate] = useState("");
+  const [priority, setPriority] = useState("medium");
+  const [xpReward, setXpReward] = useState(300);
+  const [category, setCategory] = useState("Work");
 
   const submit = (e) => {
     e.preventDefault();
-    if (!newTitle.trim()) return;
+    if (!title.trim()) return;
     addBigGoal({
-      title: newTitle.trim(),
-      description: newDesc || undefined,
-      targetDate: newDate,
-      priority: newPriority,
-      category: newCategory,
-      xpReward: parseInt(newXP) || 300,
+      title: title.trim(),
+      description: description || undefined,
+      targetDate,
+      priority,
+      category,
+      xpReward: Number(xpReward) || 300,
       milestones: [],
     });
     setShowForm(false);
-    setNewTitle("");
-    setNewDesc("");
-    setNewDate("");
-    setNewPriority("medium");
-    setNewXP(300);
-    setNewCategory("Work");
+    setTitle("");
+    setDescription("");
+    setTargetDate("");
+    setPriority("medium");
+    setXpReward(300);
+    setCategory("Work");
+  };
+
+  const advance = (g, percent) => {
+    const next = (percent + 25) % 100;
+    setGoalProgress(g.id, next);
+    notify(`Quest progress · ${next}%`);
+  };
+
+  const toggle = (g, m) => {
+    toggleMilestone(g.id, m.id);
+    notify(`${m.achieved ? "-" : "+"}15 XP · ${m.achieved ? "milestone undone" : "milestone done"}`);
   };
 
   return (
     <SectionCard
       title="Big Goals"
+      icon={<TargetIcon className="h-5 w-5" />}
       count={bigGoals.length}
-      countLabel="active goal"
-      icon={<TargetIcon className="h-5 w-5 text-amber-300" />}
-      accent="bg-amber-500/15 border border-amber-500/20"
+      countLabel={bigGoals.length === 1 ? "active goal" : "active goals"}
       action={
         <button
-          onClick={() => setShowForm(true)}
-          className="grid h-8 w-8 place-items-center rounded-xl bg-amber-500 text-slate-950 transition hover:bg-amber-400"
+          className="btn btn-icon"
+          onClick={() => setShowForm((s) => !s)}
           aria-label="Add big goal"
+          aria-expanded={showForm}
         >
-          <TargetIcon className="h-4 w-4" />
+          <PlusIcon className="h-4 w-4" />
         </button>
       }
     >
       {showForm && (
-        <form onSubmit={submit} className="mb-4 flex flex-col gap-4 rounded-2xl border border-amber-500/20 bg-slate-800/70 p-5">
-          <div className="flex flex-col gap-2">
-            <input
-              value={newTitle}
-              onChange={(e) => setNewTitle(e.target.value)}
-              placeholder="Goal title"
-              className="rounded-xl border border-slate-700 bg-slate-900 px-3 py-2.5 text-sm text-slate-100 placeholder:text-slate-500 outline-none focus:border-amber-500/50 focus:ring-2 focus:ring-amber-500/20"
-            />
-            <textarea
-              value={newDesc}
-              onChange={(e) => setNewDesc(e.target.value)}
-              placeholder="Description"
-              rows={2}
-              className="rounded-xl border border-slate-700 bg-slate-900 px-3 py-2 text-sm text-slate-100 placeholder:text-slate-500 outline-none resize-none focus:border-amber-500/50 focus:ring-2 focus:ring-amber-500/20"
-            />
-          </div>
-          <div className="grid grid-cols-3 gap-2">
+        <form
+          onSubmit={submit}
+          className="mb-4 flex flex-col gap-3 border-2 p-3"
+          style={{ borderColor: "var(--gold-d)" }}
+        >
+          <input
+            className="input"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            placeholder="Goal title"
+            aria-label="Goal title"
+          />
+          <textarea
+            className="input resize-none"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            placeholder="Description"
+            rows={2}
+            aria-label="Goal description"
+          />
+          <div className="flex flex-wrap gap-3">
             <select
-              value={newPriority}
-              onChange={(e) => setNewPriority(e.target.value)}
-              className="rounded-xl border border-slate-700 bg-slate-900 px-3 py-2 text-xs font-semibold text-slate-200 outline-none"
+              className="input"
+              style={{ width: "auto" }}
+              value={priority}
+              onChange={(e) => setPriority(e.target.value)}
+              aria-label="Priority"
             >
               <option value="low">Low</option>
               <option value="medium">Medium</option>
               <option value="high">High</option>
             </select>
             <select
-              value={newCategory}
-              onChange={(e) => setNewCategory(e.target.value)}
-              className="rounded-xl border border-slate-700 bg-slate-900 px-3 py-2 text-xs font-semibold text-slate-200 outline-none"
+              className="input"
+              style={{ width: "auto" }}
+              value={category}
+              onChange={(e) => setCategory(e.target.value)}
+              aria-label="Category"
             >
               {CATEGORIES.map((c) => (
                 <option key={c} value={c}>
@@ -98,149 +120,127 @@ const BigGoals = () => {
               ))}
             </select>
             <select
-              value={newXP}
-              onChange={(e) => setNewXP(e.target.value)}
-              className="rounded-xl border border-slate-700 bg-slate-900 px-3 py-2 text-xs font-semibold text-slate-200 outline-none"
+              className="input"
+              style={{ width: "auto" }}
+              value={xpReward}
+              onChange={(e) => setXpReward(e.target.value)}
+              aria-label="XP reward"
             >
               <option value={150}>150 XP</option>
               <option value={300}>300 XP</option>
               <option value={500}>500 XP</option>
             </select>
-          </div>
-          <div className="grid grid-cols-2 gap-2">
             <input
+              className="input"
+              style={{ width: "auto" }}
               type="date"
-              value={newDate}
-              onChange={(e) => setNewDate(e.target.value)}
-              className="rounded-xl border border-slate-700 bg-slate-900 px-3 py-2 text-sm text-slate-100 outline-none"
+              value={targetDate}
+              onChange={(e) => setTargetDate(e.target.value)}
+              aria-label="Target date"
             />
-            <button
-              type="submit"
-              className="grid h-10 w-10 place-items-center rounded-xl bg-amber-500 text-slate-950 transition hover:bg-amber-400"
-              aria-label="Create goal"
-            >
-              <TargetIcon className="h-4 w-4" />
+            <button type="submit" className="btn btn-primary">
+              Create
             </button>
           </div>
         </form>
       )}
 
-      <div className="flex flex-col gap-3.5">
-        {bigGoals.length === 0 && (
-          <p className="rounded-2xl border border-dashed border-slate-700 bg-slate-800/50 px-4 py-6 text-center text-sm text-slate-500">
-            No big goals yet. What do you want to achieve this season?
-          </p>
-        )}
-        {bigGoals.map((g) => {
-          const priorityTheme = PRIORITY_THEME[g.priority];
-          const percent = Math.min(100, Math.max(0, g.currentProgress));
+      {bigGoals.length === 0 ? (
+        <p
+          className="mt-2 border-2 border-dashed px-4 py-6 text-center text-[15px]"
+          style={{ borderColor: "var(--ink)", color: "var(--mute)" }}
+        >
+          No big goals yet. What do you want to achieve this season?
+        </p>
+      ) : (
+        <div className="flex flex-col gap-4">
+          {bigGoals.map((g) => {
+            const percent = clamp(g.currentProgress);
+            const theme = PRIORITY_THEME[g.priority];
+            const target = g.targetDate || "no date";
 
-          const completedMilestones = g.milestones.filter((m) => m.achieved);
-          const uncompleted = g.milestones.filter((m) => !m.achieved);
-
-          return (
-            <div
-              key={g.id}
-              className={`flex flex-col rounded-3xl border bg-slate-800/70 shadow-lg transition ${g.priority === "high" ? "border-rose-500/40 ring-rose-500/20" : g.priority === "medium" ? "border-amber-500/40 ring-amber-500/20" : "border-sky-500/40 ring-sky-500/20"}`}
-            >
-              <div className="flex items-center justify-between px-5 py-4 border-b border-slate-700/60">
-                <div className="flex items-center gap-3">
-                  <div className={`grid h-10 w-10 place-items-center rounded-xl ${priorityTheme.badge}`}>
-                    <TargetIcon className="h-4 w-4" />
+            return (
+              <div
+                key={g.id}
+                className="border-4 p-3"
+                style={{ borderColor: "var(--ink)", background: "var(--panel2)" }}
+              >
+                <div className="flex items-start justify-between gap-3">
+                  <div className="flex items-center gap-3">
+                    <TargetIcon className="h-5 w-5" style={{ color: theme.color }} />
+                    <div className="min-w-0">
+                      <p className="pixel text-[9px]" style={{ color: "var(--gold)" }}>
+                        {g.title}
+                      </p>
+                      <p className="mt-1 text-[13px]" style={{ color: "var(--mute)" }}>
+                        {theme.label} · {target} · {g.xpReward} XP
+                      </p>
+                    </div>
                   </div>
-                  <div>
-                    <h3 className="font-bold text-lg text-slate-100">{g.title}</h3>
-                    <p className="text-xs text-slate-400 truncate">{g.description}</p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-1.5 text-xs font-semibold">
-                  {priorityTheme.label}
-                  <span className="rounded-full px-2 py-0.5 text-[9px] font-bold text-slate-300 bg-slate-800/70">{g.xpReward} XP</span>
-                </div>
-              </div>
-
-              <div className="px-5 py-3">
-                <div className="flex items-center justify-between mb-2">
-                  <div className="flex-1">
-                    <p className="font-semibold text-slate-100">{g.title}</p>
-                    <p className="text-xs text-slate-400 truncate">{g.targetDate}</p>
-                  </div>
-                  <span className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[8px] font-bold ${priorityTheme.bar} text-slate-100`}>
+                  <span className="pixel text-[9px]" style={{ color: "var(--gold)" }}>
                     {percent}%
                   </span>
                 </div>
 
-                <div className="h-2 overflow-hidden rounded-full bg-slate-800">
-                  <div
-                    className="h-full rounded-full bg-gradient-to-r from-amber-500 via-yellow-400 to-amber-300 transition-all duration-700"
-                    style={{ width: `${percent}%` }}
-                  />
+                <div className="bar mt-3">
+                  <span style={{ width: `${percent}%` }} />
                 </div>
 
-                {uncompleted.length > 0 && (
-                  <details className="mt-3 rounded-xl border border-slate-700/60 bg-slate-800/30 p-3">
-                    <summary className="cursor-pointer list-none flex items-center gap-2 text-xs text-slate-400">
-                      <ChevronDownIcon className="h-3.5 w-3.5 text-slate-500" />
-                      Milestones
-                    </summary>
-                    <div className="mt-2 space-y-1">
-                      {uncompleted.map((m) => (
-                        <div
-                          key={m.id}
-                          className={`flex items-center gap-2 rounded-xl bg-slate-700/50 px-3 py-1.5 text-xs ${m.achieved ? "text-emerald-400 opacity-80 line-through" : "text-slate-300"}`}
+                {g.milestones.length > 0 && (
+                  <div className="mt-3 flex flex-col gap-2">
+                    {g.milestones.map((m) => (
+                      <div key={m.id} className="tree-child">
+                        <button
+                          className="check"
+                          data-done={m.achieved}
+                          onClick={() => toggle(g, m)}
+                          aria-pressed={m.achieved}
+                          aria-label={`Milestone ${m.title}`}
                         >
-                          {m.title}
-                          {m.targetProgress > 0 && (
-                            <span className="ml-auto rounded-full bg-slate-800/50 px-2 py-0.5 text-[9px] font-bold text-slate-400">
-                              {m.targetProgress}%
-                            </span>
-                          )}
+                          <CheckIcon className="h-4 w-4" />
+                        </button>
+                        <div className="min-w-0 flex-1">
+                          <p
+                            className="text-[15px]"
+                            style={{
+                              color: m.achieved ? "var(--mute)" : "var(--text)",
+                              textDecoration: m.achieved ? "line-through" : "none",
+                            }}
+                          >
+                            {m.title}
+                          </p>
                         </div>
-                      ))}
-                    </div>
-                  </details>
-                )}
-
-                {completedMilestones.length > 0 && (
-                  <div className="mt-3 rounded-xl border border-emerald-500/30 bg-emerald-500/10 p-3 text-sm text-emerald-300">
-                    <span className="font-semibold">Completed milestones:</span>
-                    <span className="ml-2 text-emerald-400">{completedMilestones.length}</span>
+                        <span className="pixel text-[8px]" style={{ color: "var(--mute)" }}>
+                          {clamp(m.targetProgress)}%
+                        </span>
+                      </div>
+                    ))}
                   </div>
                 )}
-              </div>
 
-              <div className="px-5 py-2 flex items-center justify-between border-t border-slate-700/60">
-                <button
-                  onClick={() => setGoalProgress(g.id, (percent + 25) % 100)}
-                  className="flex items-center gap-1.5 rounded-xl bg-amber-500/10 px-3 py-2 text-xs font-bold text-amber-300 hover:bg-amber-500/20 transition"
-                  aria-label="Increment progress"
-                >
-                  <FlameIcon className="h-3.5 w-3.5 text-amber-400" /> Progress
-                </button>
-                <button
-                  onClick={() => {
-                    toggleMilestone(g.id, g.milestones.find((m) => !m.achieved)?.id || "");
-                    gainXP(15);
-                  }}
-                  className="flex items-center gap-1.5 rounded-xl bg-amber-500/10 px-3 py-2 text-xs font-bold text-amber-300 hover:bg-amber-500/20 transition"
-                  aria-label="Toggle milestone"
-                >
-                  <ZapIcon className="h-3.5 w-3.5 text-amber-400" /> Milestone
-                </button>
+                <div className="mt-3 flex items-center justify-between gap-3">
+                  <button
+                    className="btn"
+                    onClick={() => advance(g, percent)}
+                    aria-label="Advance goal progress"
+                  >
+                    <span className="flex items-center gap-2">
+                      <FlameIcon className="h-4 w-4" /> Progress
+                    </span>
+                  </button>
+                  <button
+                    className="btn"
+                    onClick={() => deleteBigGoal(g.id)}
+                    aria-label="Delete goal"
+                  >
+                    <TrashIcon className="h-4 w-4" />
+                  </button>
+                </div>
               </div>
-
-              <button
-                onClick={() => deleteBigGoal(g.id)}
-                className="px-5 py-2 rounded-xl text-xs font-bold text-slate-500 hover:text-rose-400 hover:bg-rose-500/15 transition"
-                aria-label="Delete goal"
-              >
-                <TrashIcon className="h-3.5 w-3.5" />
-                Delete
-              </button>
-            </div>
-          );
-        })}
-      </div>
+            );
+          })}
+        </div>
+      )}
     </SectionCard>
   );
 };
