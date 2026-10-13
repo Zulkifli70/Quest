@@ -38,16 +38,23 @@ export const isAllDailyDone = (quests, habits, today) => {
 };
 
 export const LEVEL_STEP = 100;
+const LEVEL_GROWTH = 50;
 
-/* Level = floor(XP / 100) + 1 (design.md §5) */
+/* XP menuju level berikutnya naik tiap level: 100, 150, 200, ...
+   ponytail: linear +50/level; ganti ke kurva perkalian (mis. ×1.2) kalau
+   pacing level tinggi perlu makin curam. */
 export const levelFromXP = (xp) => {
   const safe = Math.max(0, xp);
-  const level = Math.floor(safe / LEVEL_STEP) + 1;
-  const current = safe % LEVEL_STEP;
+  let level = 1;
+  let current = safe;
+  while (current >= LEVEL_STEP + (level - 1) * LEVEL_GROWTH) {
+    current -= LEVEL_STEP + (level - 1) * LEVEL_GROWTH;
+    level += 1;
+  }
   return {
     level,
     current,
-    needed: LEVEL_STEP,
+    needed: LEVEL_STEP + (level - 1) * LEVEL_GROWTH,
     progress: current,
   };
 };

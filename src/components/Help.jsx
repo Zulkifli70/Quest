@@ -127,7 +127,10 @@ const Help = () => {
                   <li>Misi: Mudah 10, Sedang 25, Sulit 50 XP.</li>
                   <li>Kebiasaan: 8 XP per check-in.</li>
                   <li>Langkah tujuan: 5 XP, plus bonus saat tujuan tuntas.</li>
-                  <li>Level naik tiap 100 XP (Level = XP ÷ 100 + 1).</li>
+                  <li>
+                      Level butuh XP makin banyak tiap naik: mulai 100, lalu
+                      150, 200, dst.
+                    </li>
                   <li>
                     Membatalkan centang mengurangi XP yang sama — supaya tidak
                     bisa curang.

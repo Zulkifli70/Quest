@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { useProductivity } from "../store/ProductivityContext";
+import { getTier } from "../lib/constants";
 
 const ToastHost = () => {
   const { toast, levelUp, dismissLevelUp } = useProductivity();
@@ -44,6 +45,9 @@ const ToastHost = () => {
             </p>
             <p className="pixel mt-4 text-[20px]" style={{ color: "var(--text)" }}>
               Level {levelUp.level}
+            </p>
+            <p className="pixel mt-1 text-[10px] uppercase" style={{ color: "var(--gold)" }}>
+              {getTier(levelUp.level)}
             </p>
             <p className="mt-3 text-[15px]" style={{ color: "var(--mute)" }}>
               Kamu naik level. Terus gaskeun!

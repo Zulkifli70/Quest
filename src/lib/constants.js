@@ -24,6 +24,24 @@ export const CATEGORY_LABELS = {
 
 export const categoryLabel = (c) => CATEGORY_LABELS[c] || c;
 
+export const LEVEL_TIERS = [
+  { min: 1, label: "Recruit" },
+  { min: 11, label: "Adventurer" },
+  { min: 21, label: "Knight" },
+  { min: 31, label: "Commander" },
+  { min: 41, label: "Viscount" },
+  { min: 51, label: "Marquess" },
+  { min: 61, label: "Duke" },
+  { min: 71, label: "Hero" },
+  { min: 81, label: "King" },
+  { min: 91, label: "Legend" },
+  { min: 101, label: "Myth" },
+  { min: 111, label: "Immortal" },
+];
+
+export const getTier = (level) =>
+  [...LEVEL_TIERS].reverse().find((t) => level >= t.min)?.label ?? "Recruit";
+
 export const DEFAULT_STATE = {
   dailyQuests: [],
   habits: [],

@@ -1,5 +1,6 @@
 import { useProductivity } from "../store/ProductivityContext";
 import { todayKey } from "../lib/questLogic";
+import { getTier } from "../lib/constants";
 import { ZapIcon } from "./icons";
 
 const SEGMENTS = 20;
@@ -30,6 +31,9 @@ const Header = () => {
             </p>
             <p className="pixel mt-2 text-[15px]" style={{ color: "var(--gold)" }}>
               {levelInfo.level}
+            </p>
+            <p className="pixel mt-1 text-[6px] uppercase" style={{ color: "var(--mute)" }}>
+              {getTier(levelInfo.level)}
             </p>
           </div>
           <div>
