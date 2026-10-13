@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useProductivity } from "../store/ProductivityContext";
-import { getTier } from "../lib/constants";
+import { getTier, getTierColor } from "../lib/constants";
 
 const ToastHost = () => {
   const { toast, levelUp, dismissLevelUp } = useProductivity();
@@ -38,6 +38,7 @@ const ToastHost = () => {
             aria-modal="true"
             aria-labelledby="levelup-title"
             className="panel w-full max-w-sm text-center"
+            style={{ borderColor: getTierColor(levelUp.level) }}
             onClick={(e) => e.stopPropagation()}
           >
             <p id="levelup-title" className="pixel text-[12px]" style={{ color: "var(--gold)" }}>
@@ -46,7 +47,10 @@ const ToastHost = () => {
             <p className="pixel mt-4 text-[20px]" style={{ color: "var(--text)" }}>
               Level {levelUp.level}
             </p>
-            <p className="pixel mt-1 text-[10px] uppercase" style={{ color: "var(--gold)" }}>
+            <p
+              className="pixel mt-1 text-[10px] uppercase"
+              style={{ color: getTierColor(levelUp.level) }}
+            >
               {getTier(levelUp.level)}
             </p>
             <p className="mt-3 text-[15px]" style={{ color: "var(--mute)" }}>
