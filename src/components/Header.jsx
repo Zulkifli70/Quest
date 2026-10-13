@@ -1,6 +1,6 @@
 import { useProductivity } from "../store/ProductivityContext";
 import { todayKey } from "../lib/questLogic";
-import { getTier, getTierColor } from "../lib/constants";
+import { getTier, getTierColor, getTierBorderStyle } from "../lib/constants";
 import { ZapIcon } from "./icons";
 
 const SEGMENTS = 20;
@@ -22,10 +22,10 @@ const Header = () => {
   const filled = Math.round((levelInfo.current / levelInfo.needed) * SEGMENTS);
 
   return (
-    <header className="panel" style={{ borderColor: getTierColor(levelInfo.level) }}>
+    <header className="panel" style={{ borderColor: getTierColor(levelInfo.level), borderStyle: getTierBorderStyle(levelInfo.level) }}>
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-4">
-          <div className="level-box" style={{ borderColor: getTierColor(levelInfo.level) }}>
+          <div className="level-box" style={{ borderColor: getTierColor(levelInfo.level), borderStyle: getTierBorderStyle(levelInfo.level) }}>
             <p className="pixel text-[8px]" style={{ color: "var(--mute)" }}>
               Level
             </p>
