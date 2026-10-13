@@ -172,6 +172,11 @@ button {
   padding: 0;
 }
 
+.btn:hover {
+  box-shadow: 4px 4px 0 var(--ink);
+  transform: translate(-2px, -2px);
+}
+
 /* ---------- Inputs ---------- */
 
 .input {
@@ -335,6 +340,11 @@ button {
   outline-offset: 2px;
 }
 
+.tab:hover {
+  box-shadow: 4px 4px 0 var(--ink);
+  transform: translate(-2px, -2px);
+}
+
 /* ---------- Quest tree ---------- */
 
 .tree-child {
@@ -386,6 +396,11 @@ button {
 .help-fab:focus-visible {
   outline: 3px solid var(--gold);
   outline-offset: 2px;
+}
+
+.help-fab:hover {
+  box-shadow: 4px 4px 0 var(--ink);
+  transform: translate(-2px, -2px);
 }
 
 .help-backdrop {
