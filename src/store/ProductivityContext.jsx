@@ -8,6 +8,7 @@ const STORAGE_KEY = "zulk-coin:productivity:v1";
 const ProductivityContext = createContext(null);
 
 const HABIT_XP = 8;
+const SUBTASK_XP = 5;
 
 const seedState = () => {
   const today = todayKey();
@@ -16,8 +17,8 @@ const seedState = () => {
     dailyQuests: [
       {
         id: uid(),
-        title: "Drink 2L of water",
-        description: "Stay hydrated throughout the day",
+        title: "Minum air 2L",
+        description: "Jaga hidrasi sepanjang hari",
         date: today,
         completed: false,
         xpReward: QUEST_THEME.easy.xp,
@@ -27,8 +28,8 @@ const seedState = () => {
       },
       {
         id: uid(),
-        title: "Finish project proposal",
-        description: "Draft and outline the Q3 roadmap",
+        title: "Selesaikan proposal proyek",
+        description: "Susun draf dan kerangka roadmap Q3",
         date: today,
         completed: false,
         xpReward: QUEST_THEME.hard.xp,
@@ -40,8 +41,8 @@ const seedState = () => {
     habits: [
       {
         id: uid(),
-        name: "Morning run",
-        description: "30 minutes jog",
+        name: "Lari pagi",
+        description: "Jogging 30 menit",
         targetFrequency: 7,
         history: [],
         category: "Health",
@@ -51,18 +52,35 @@ const seedState = () => {
     bigGoals: [
       {
         id: uid(),
-        title: "Ship the productivity app",
-        description: "Launch quest-themed productivity app v1",
-        targetDate: new Date(Date.now() + 90 * 86400000).toISOString().slice(0, 10),
-        currentProgress: 35,
+        title: "Persiapan wawancara",
+        description: "Dapatkan posisi frontend — belajar, latihan, dan membangun",
+        targetDate: new Date(Date.now() + 45 * 86400000).toISOString().slice(0, 10),
+        currentProgress: 0,
         priority: "high",
+        xpReward: 300,
+        category: "Learning",
+        completed: false,
+        subtasks: [
+          { id: uid(), title: "Pelajari DSA", done: true },
+          { id: uid(), title: "Pelajari fungsi JS", done: false },
+          { id: uid(), title: "Pelajari pembuatan UI", done: false },
+          { id: uid(), title: "Simulasi wawancara", done: false },
+        ],
+      },
+      {
+        id: uid(),
+        title: "Rilis aplikasi produktivitas",
+        description: "Luncurkan aplikasi produktivitas bertema misi v1",
+        targetDate: new Date(Date.now() + 90 * 86400000).toISOString().slice(0, 10),
+        currentProgress: 0,
+        priority: "medium",
         xpReward: 500,
         category: "Work",
         completed: false,
-        milestones: [
-          { id: uid(), title: "Core models", targetProgress: 25, achieved: true, achievedAt: new Date().toISOString() },
-          { id: uid(), title: "Quest UI", targetProgress: 50, achieved: false, achievedAt: null },
-          { id: uid(), title: "Persist & polish", targetProgress: 75, achieved: false, achievedAt: null },
+        subtasks: [
+          { id: uid(), title: "Model data inti", done: true },
+          { id: uid(), title: "UI misi", done: true },
+          { id: uid(), title: "Simpan data & poles", done: false },
         ],
       },
     ],
@@ -72,7 +90,18 @@ const seedState = () => {
 const loadState = () => {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
-    if (raw) return { ...DEFAULT_STATE, ...JSON.parse(raw) };
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      return {
+        ...DEFAULT_STATE,
+        ...parsed,
+        bigGoals: (parsed.bigGoals || []).map((g) => ({
+          ...g,
+          subtasks: g.subtasks || [],
+          completed: g.completed || false,
+        })),
+      };
+    }
   } catch {
     /* ignore */
   }
@@ -178,7 +207,7 @@ export const ProductivityProvider = ({ children }) => {
         priority = "medium",
         category = "Personal",
         xpReward = 300,
-        milestones = [],
+        subtasks = [],
       }) =>
         setState((s) => ({
           ...s,
@@ -193,53 +222,51 @@ export const ProductivityProvider = ({ children }) => {
               xpReward,
               category,
               completed: false,
-              milestones: milestones.map((m) => ({
+              subtasks: subtasks.map((t) => ({
                 id: uid(),
-                title: m.title,
-                targetProgress: m.targetProgress,
-                achieved: false,
-                achievedAt: null,
+                title: t.title,
+                done: false,
               })),
             },
             ...s.bigGoals,
           ],
         })),
 
-      setGoalProgress: (id, progress) =>
+      addSubtask: (goalId, title) =>
         setState((s) => ({
           ...s,
           bigGoals: s.bigGoals.map((g) =>
-            g.id === id
-              ? {
-                  ...g,
-                  currentProgress: Math.min(100, Math.max(0, progress)),
-                  milestones: g.milestones.map((m) => ({
-                    ...m,
-                    achieved: m.targetProgress <= progress ? true : m.achieved,
-                    achievedAt:
-                      m.targetProgress <= progress && !m.achievedAt
-                        ? new Date().toISOString()
-                        : m.achievedAt,
-                  })),
-                }
+            g.id === goalId
+              ? { ...g, subtasks: [...(g.subtasks || []), { id: uid(), title, done: false }] }
               : g
           ),
         })),
 
-      toggleMilestone: (goalId, milestoneId) =>
+      toggleSubtask: (goalId, subtaskId) =>
+        setState((s) => {
+          let delta = 0;
+          const bigGoals = s.bigGoals.map((g) => {
+            if (g.id !== goalId) return g;
+            const subtasks = (g.subtasks || []).map((t) => {
+              if (t.id !== subtaskId) return t;
+              delta += t.done ? -SUBTASK_XP : SUBTASK_XP;
+              return { ...t, done: !t.done };
+            });
+            const allDone = subtasks.length > 0 && subtasks.every((t) => t.done);
+            if (allDone && !g.completed) delta += g.xpReward;
+            if (!allDone && g.completed) delta -= g.xpReward;
+            return { ...g, subtasks, completed: allDone };
+          });
+          return { ...s, bigGoals, totalXP: Math.max(0, s.totalXP + delta) };
+        }),
+
+      deleteSubtask: (goalId, subtaskId) =>
         setState((s) => ({
           ...s,
           bigGoals: s.bigGoals.map((g) =>
-            g.id !== goalId
-              ? g
-              : {
-                  ...g,
-                  milestones: g.milestones.map((m) =>
-                    m.id !== milestoneId
-                      ? m
-                      : { ...m, achieved: !m.achieved, achievedAt: !m.achieved ? new Date().toISOString() : null }
-                  ),
-                }
+            g.id === goalId
+              ? { ...g, subtasks: (g.subtasks || []).filter((t) => t.id !== subtaskId) }
+              : g
           ),
         })),
 

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useProductivity } from "../store/ProductivityContext";
-import { QUEST_THEME, CATEGORIES } from "../lib/constants";
+import { QUEST_THEME, CATEGORIES, categoryLabel } from "../lib/constants";
 import { todayKey } from "../lib/questLogic";
 import SectionCard from "./SectionCard";
 import { SwordIcon, PlusIcon, CheckIcon, TrashIcon } from "./icons";
@@ -26,18 +26,20 @@ const DailyQuests = () => {
 
   const toggle = (q) => {
     toggleDailyQuest(q.id);
-    notify(`${q.completed ? "-" : "+"}${q.xpReward} XP · ${q.completed ? "quest reopened" : "quest complete"}`);
+    notify(
+      `${q.completed ? "-" : "+"}${q.xpReward} XP · misi ${q.completed ? "dibuka lagi" : "selesai"}`
+    );
   };
 
   return (
     <SectionCard
-      title="Daily Quests"
+      title="Misi Harian"
       icon={<SwordIcon className="h-5 w-5" />}
       count={todays.length}
-      countLabel={todays.length === 1 ? "quest today" : "quests today"}
+      countLabel="misi hari ini"
       action={
         <span className="pixel text-[9px]" style={{ color: "var(--gold)" }}>
-          {done}/{todays.length} done
+          {done}/{todays.length} selesai
         </span>
       }
     >
@@ -51,10 +53,10 @@ const DailyQuests = () => {
             className="input"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            placeholder="New quest — e.g. read 20 pages"
-            aria-label="New quest title"
+            placeholder="Misi baru — mis. baca 20 halaman"
+            aria-label="Judul misi baru"
           />
-          <button type="submit" className="btn btn-primary btn-icon" aria-label="Add quest">
+          <button type="submit" className="btn btn-primary btn-icon" aria-label="Tambah misi">
             <PlusIcon className="h-4 w-4" />
           </button>
         </div>
@@ -64,22 +66,22 @@ const DailyQuests = () => {
             style={{ width: "auto" }}
             value={difficulty}
             onChange={(e) => setDifficulty(e.target.value)}
-            aria-label="Difficulty"
+            aria-label="Tingkat kesulitan"
           >
-            <option value="easy">Easy · {QUEST_THEME.easy.xp} XP</option>
-            <option value="medium">Medium · {QUEST_THEME.medium.xp} XP</option>
-            <option value="hard">Hard · {QUEST_THEME.hard.xp} XP</option>
+            <option value="easy">Mudah · {QUEST_THEME.easy.xp} XP</option>
+            <option value="medium">Sedang · {QUEST_THEME.medium.xp} XP</option>
+            <option value="hard">Sulit · {QUEST_THEME.hard.xp} XP</option>
           </select>
           <select
             className="input"
             style={{ width: "auto" }}
             value={category}
             onChange={(e) => setCategory(e.target.value)}
-            aria-label="Category"
+            aria-label="Kategori"
           >
             {CATEGORIES.map((c) => (
               <option key={c} value={c}>
-                {c}
+                {categoryLabel(c)}
               </option>
             ))}
           </select>
@@ -91,7 +93,7 @@ const DailyQuests = () => {
           className="mt-2 border-2 border-dashed px-4 py-6 text-center text-[15px]"
           style={{ borderColor: "var(--ink)", color: "var(--mute)" }}
         >
-          No quests for today. Add your first quest above.
+          Belum ada misi untuk hari ini. Tambahkan misi pertamamu di atas.
         </p>
       ) : (
         <div className="flex flex-col">
@@ -104,7 +106,7 @@ const DailyQuests = () => {
                   data-done={q.completed}
                   onClick={() => toggle(q)}
                   aria-pressed={q.completed}
-                  aria-label={q.completed ? "Mark quest incomplete" : "Complete quest"}
+                  aria-label={q.completed ? "Tandai misi belum selesai" : "Selesaikan misi"}
                 >
                   <CheckIcon className="h-4 w-4" />
                 </button>
@@ -119,14 +121,14 @@ const DailyQuests = () => {
                     {q.title}
                   </p>
                   <p className="pixel mt-2 text-[8px]" style={{ color: theme.color }}>
-                    {theme.label} · {q.xpReward} XP · {q.category}
+                    {theme.label} · {q.xpReward} XP · {categoryLabel(q.category)}
                   </p>
                 </div>
                 <button
                   className="btn"
                   style={{ padding: 8 }}
                   onClick={() => deleteDailyQuest(q.id)}
-                  aria-label="Delete quest"
+                  aria-label="Hapus misi"
                 >
                   <TrashIcon className="h-4 w-4" />
                 </button>
@@ -142,7 +144,7 @@ const DailyQuests = () => {
           style={{ borderColor: "var(--ink)" }}
         >
           <summary className="pixel cursor-pointer text-[8px]" style={{ color: "var(--mute)" }}>
-            Previous days ({dailyQuests.filter((q) => q.date !== today).length})
+            Hari sebelumnya ({dailyQuests.filter((q) => q.date !== today).length})
           </summary>
           <div className="mt-3 flex flex-col gap-2">
             {dailyQuests
@@ -157,7 +159,7 @@ const DailyQuests = () => {
                     className="btn"
                     style={{ padding: 6 }}
                     onClick={() => deleteDailyQuest(q.id)}
-                    aria-label="Delete quest"
+                    aria-label="Hapus misi"
                   >
                     <TrashIcon className="h-3.5 w-3.5" />
                   </button>

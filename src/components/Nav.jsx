@@ -1,9 +1,9 @@
 import { SwordIcon, FlameIcon, TargetIcon } from "./icons";
 
 const TABS = [
-  { id: "quests", label: "Quests", icon: SwordIcon },
-  { id: "habits", label: "Habits", icon: FlameIcon },
-  { id: "goals", label: "Goals", icon: TargetIcon },
+  { id: "quests", label: "Misi", icon: SwordIcon },
+  { id: "habits", label: "Kebiasaan", icon: FlameIcon },
+  { id: "goals", label: "Tujuan", icon: TargetIcon },
 ];
 
 const Nav = ({ tab, setTab }) => (

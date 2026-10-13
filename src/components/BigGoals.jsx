@@ -1,18 +1,17 @@
 import { useState } from "react";
 import { useProductivity } from "../store/ProductivityContext";
-import { PRIORITY_THEME, CATEGORIES } from "../lib/constants";
+import { PRIORITY_THEME, CATEGORIES, categoryLabel } from "../lib/constants";
 import SectionCard from "./SectionCard";
-import { TargetIcon, PlusIcon, TrashIcon, CheckIcon, FlameIcon } from "./icons";
-
-const clamp = (n) => Math.min(100, Math.max(0, n));
+import { TargetIcon, PlusIcon, TrashIcon, CheckIcon } from "./icons";
 
 const BigGoals = () => {
   const {
     bigGoals,
-    setGoalProgress,
-    toggleMilestone,
     addBigGoal,
     deleteBigGoal,
+    addSubtask,
+    toggleSubtask,
+    deleteSubtask,
     notify,
   } = useProductivity();
 
@@ -23,6 +22,9 @@ const BigGoals = () => {
   const [priority, setPriority] = useState("medium");
   const [xpReward, setXpReward] = useState(300);
   const [category, setCategory] = useState("Work");
+  const [steps, setSteps] = useState("");
+  const [drafts, setDrafts] = useState({});
+  const [editingId, setEditingId] = useState(null);
 
   const submit = (e) => {
     e.preventDefault();
@@ -34,39 +36,55 @@ const BigGoals = () => {
       priority,
       category,
       xpReward: Number(xpReward) || 300,
-      milestones: [],
+      subtasks: steps
+        .split("\n")
+        .map((s) => s.trim())
+        .filter(Boolean)
+        .map((t) => ({ title: t })),
     });
     setShowForm(false);
     setTitle("");
     setDescription("");
+    setSteps("");
     setTargetDate("");
     setPriority("medium");
     setXpReward(300);
     setCategory("Work");
   };
 
-  const advance = (g, percent) => {
-    const next = (percent + 25) % 100;
-    setGoalProgress(g.id, next);
-    notify(`Quest progress · ${next}%`);
+  const submitSubtask = (e, goalId) => {
+    e.preventDefault();
+    const text = (drafts[goalId] || "").trim();
+    if (!text) return;
+    addSubtask(goalId, text);
+    setDrafts((d) => ({ ...d, [goalId]: "" }));
   };
 
-  const toggle = (g, m) => {
-    toggleMilestone(g.id, m.id);
-    notify(`${m.achieved ? "-" : "+"}15 XP · ${m.achieved ? "milestone undone" : "milestone done"}`);
+  const toggle = (goal, subtask) => {
+    const others = (goal.subtasks || []).filter((t) => t.id !== subtask.id);
+    const willComplete = !subtask.done && subtask && others.every((t) => t.done) && others.length > 0;
+    toggleSubtask(goal.id, subtask.id);
+
+    if (subtask.done) {
+      notify(`-5 XP · ${subtask.title}`);
+    } else if (willComplete) {
+      notify(`+${goal.xpReward} XP · tujuan tercapai!`);
+    } else {
+      notify(`+5 XP · ${subtask.title}`);
+    }
   };
 
   return (
     <SectionCard
-      title="Big Goals"
+      title="Tujuan Besar"
       icon={<TargetIcon className="h-5 w-5" />}
       count={bigGoals.length}
-      countLabel={bigGoals.length === 1 ? "active goal" : "active goals"}
+      countLabel="tujuan aktif"
       action={
         <button
           className="btn btn-icon"
           onClick={() => setShowForm((s) => !s)}
-          aria-label="Add big goal"
+          aria-label="Tambah tujuan besar"
           aria-expanded={showForm}
         >
           <PlusIcon className="h-4 w-4" />
@@ -83,16 +101,26 @@ const BigGoals = () => {
             className="input"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            placeholder="Goal title"
-            aria-label="Goal title"
+            placeholder="Tujuan — mis. persiapan wawancara"
+            aria-label="Judul tujuan"
           />
           <textarea
             className="input resize-none"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
-            placeholder="Description"
+            placeholder="Deskripsi"
             rows={2}
-            aria-label="Goal description"
+            aria-label="Deskripsi tujuan"
+          />
+          <textarea
+            className="input resize-none"
+            value={steps}
+            onChange={(e) => setSteps(e.target.value)}
+            placeholder={
+              "Rincikan jadi langkah kecil — satu per baris\npelajari DSA\npelajari fungsi JS\npelajari pembuatan UI"
+            }
+            rows={4}
+            aria-label="Langkah, satu per baris"
           />
           <div className="flex flex-wrap gap-3">
             <select
@@ -100,22 +128,22 @@ const BigGoals = () => {
               style={{ width: "auto" }}
               value={priority}
               onChange={(e) => setPriority(e.target.value)}
-              aria-label="Priority"
+              aria-label="Prioritas"
             >
-              <option value="low">Low</option>
-              <option value="medium">Medium</option>
-              <option value="high">High</option>
+              <option value="low">Rendah</option>
+              <option value="medium">Sedang</option>
+              <option value="high">Tinggi</option>
             </select>
             <select
               className="input"
               style={{ width: "auto" }}
               value={category}
               onChange={(e) => setCategory(e.target.value)}
-              aria-label="Category"
+              aria-label="Kategori"
             >
               {CATEGORIES.map((c) => (
                 <option key={c} value={c}>
-                  {c}
+                  {categoryLabel(c)}
                 </option>
               ))}
             </select>
@@ -124,7 +152,7 @@ const BigGoals = () => {
               style={{ width: "auto" }}
               value={xpReward}
               onChange={(e) => setXpReward(e.target.value)}
-              aria-label="XP reward"
+              aria-label="Hadiah XP"
             >
               <option value={150}>150 XP</option>
               <option value={300}>300 XP</option>
@@ -136,10 +164,10 @@ const BigGoals = () => {
               type="date"
               value={targetDate}
               onChange={(e) => setTargetDate(e.target.value)}
-              aria-label="Target date"
+              aria-label="Tanggal target"
             />
             <button type="submit" className="btn btn-primary">
-              Create
+              Buat
             </button>
           </div>
         </form>
@@ -150,14 +178,18 @@ const BigGoals = () => {
           className="mt-2 border-2 border-dashed px-4 py-6 text-center text-[15px]"
           style={{ borderColor: "var(--ink)", color: "var(--mute)" }}
         >
-          No big goals yet. What do you want to achieve this season?
+          Belum ada tujuan. Tambahkan satu, lalu rincikan jadi langkah kecil.
         </p>
       ) : (
         <div className="flex flex-col gap-4">
           {bigGoals.map((g) => {
-            const percent = clamp(g.currentProgress);
             const theme = PRIORITY_THEME[g.priority];
-            const target = g.targetDate || "no date";
+            const subtasks = g.subtasks || [];
+            const done = subtasks.filter((t) => t.done).length;
+            const percent = subtasks.length
+              ? Math.round((done / subtasks.length) * 100)
+              : Math.min(100, Math.max(0, g.currentProgress || 0));
+            const target = g.targetDate || "tanpa tanggal";
 
             return (
               <div
@@ -186,55 +218,90 @@ const BigGoals = () => {
                   <span style={{ width: `${percent}%` }} />
                 </div>
 
-                {g.milestones.length > 0 && (
+                {subtasks.length > 0 && (
                   <div className="mt-3 flex flex-col gap-2">
-                    {g.milestones.map((m) => (
-                      <div key={m.id} className="tree-child">
+                    {subtasks.map((t) => (
+                      <div key={t.id} className="tree-child">
                         <button
                           className="check"
-                          data-done={m.achieved}
-                          onClick={() => toggle(g, m)}
-                          aria-pressed={m.achieved}
-                          aria-label={`Milestone ${m.title}`}
+                          data-done={t.done}
+                          onClick={() => toggle(g, t)}
+                          aria-pressed={t.done}
+                          aria-label={t.done ? `Batalkan ${t.title}` : `Selesaikan ${t.title}`}
                         >
                           <CheckIcon className="h-4 w-4" />
                         </button>
-                        <div className="min-w-0 flex-1">
-                          <p
-                            className="text-[15px]"
-                            style={{
-                              color: m.achieved ? "var(--mute)" : "var(--text)",
-                              textDecoration: m.achieved ? "line-through" : "none",
-                            }}
-                          >
-                            {m.title}
-                          </p>
-                        </div>
-                        <span className="pixel text-[8px]" style={{ color: "var(--mute)" }}>
-                          {clamp(m.targetProgress)}%
+                        <span
+                          className="min-w-0 flex-1 text-[15px]"
+                          style={{
+                            color: t.done ? "var(--mute)" : "var(--text)",
+                            textDecoration: t.done ? "line-through" : "none",
+                          }}
+                        >
+                          {t.title}
                         </span>
+                        {editingId === g.id && (
+                          <button
+                            className="btn"
+                            style={{ padding: 6 }}
+                            onClick={() => deleteSubtask(g.id, t.id)}
+                            aria-label={`Hapus ${t.title}`}
+                          >
+                            <TrashIcon className="h-3.5 w-3.5" />
+                          </button>
+                        )}
                       </div>
                     ))}
                   </div>
                 )}
 
+                {editingId === g.id && (
+                  <form
+                    onSubmit={(e) => submitSubtask(e, g.id)}
+                    className="mt-3 flex gap-3"
+                  >
+                    <input
+                      className="input"
+                      value={drafts[g.id] || ""}
+                      onChange={(e) => setDrafts((d) => ({ ...d, [g.id]: e.target.value }))}
+                      placeholder="Tambah langkah — mis. pelajari DSA"
+                      aria-label={`Tambah langkah ke ${g.title}`}
+                    />
+                    <button
+                      type="submit"
+                      className="btn btn-primary btn-icon"
+                      aria-label="Tambah langkah"
+                    >
+                      <PlusIcon className="h-4 w-4" />
+                    </button>
+                  </form>
+                )}
+
                 <div className="mt-3 flex items-center justify-between gap-3">
-                  <button
-                    className="btn"
-                    onClick={() => advance(g, percent)}
-                    aria-label="Advance goal progress"
-                  >
-                    <span className="flex items-center gap-2">
-                      <FlameIcon className="h-4 w-4" /> Progress
-                    </span>
-                  </button>
-                  <button
-                    className="btn"
-                    onClick={() => deleteBigGoal(g.id)}
-                    aria-label="Delete goal"
-                  >
-                    <TrashIcon className="h-4 w-4" />
-                  </button>
+                  <span className="pixel text-[8px]" style={{ color: "var(--mute)" }}>
+                    {done}/{subtasks.length} langkah
+                  </span>
+                  <div className="flex items-center gap-2">
+                    <button
+                      className="btn"
+                      onClick={() => setEditingId((id) => (id === g.id ? null : g.id))}
+                      aria-pressed={editingId === g.id}
+                      aria-label={
+                        editingId === g.id ? `Selesai mengubah ${g.title}` : `Ubah ${g.title}`
+                      }
+                    >
+                      <span className="pixel text-[8px]">
+                        {editingId === g.id ? "Selesai" : "Ubah"}
+                      </span>
+                    </button>
+                    <button
+                      className="btn"
+                      onClick={() => deleteBigGoal(g.id)}
+                      aria-label="Hapus tujuan"
+                    >
+                      <TrashIcon className="h-4 w-4" />
+                    </button>
+                  </div>
                 </div>
               </div>
             );

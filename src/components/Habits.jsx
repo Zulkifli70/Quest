@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useProductivity } from "../store/ProductivityContext";
-import { CATEGORIES } from "../lib/constants";
+import { CATEGORIES, categoryLabel } from "../lib/constants";
 import { todayKey, lastNDays } from "../lib/questLogic";
 import SectionCard from "./SectionCard";
 import { FlameIcon, PlusIcon, CheckIcon, TrashIcon } from "./icons";
@@ -32,15 +32,15 @@ const Habits = () => {
 
   return (
     <SectionCard
-      title="Habits"
+      title="Kebiasaan"
       icon={<FlameIcon className="h-5 w-5" />}
       count={active.length}
-      countLabel={active.length === 1 ? "habit" : "habits"}
+      countLabel="kebiasaan"
       action={
         <button
           className="btn btn-icon"
           onClick={() => setShowForm((s) => !s)}
-          aria-label="Add habit"
+          aria-label="Tambah kebiasaan"
           aria-expanded={showForm}
         >
           <PlusIcon className="h-4 w-4" />
@@ -57,8 +57,8 @@ const Habits = () => {
             className="input"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            placeholder="Habit name — e.g. meditate"
-            aria-label="Habit name"
+            placeholder="Nama kebiasaan — mis. meditasi"
+            aria-label="Nama kebiasaan"
           />
           <div className="flex flex-wrap gap-3">
             <select
@@ -66,11 +66,11 @@ const Habits = () => {
               style={{ width: "auto" }}
               value={category}
               onChange={(e) => setCategory(e.target.value)}
-              aria-label="Category"
+              aria-label="Kategori"
             >
               {CATEGORIES.map((c) => (
                 <option key={c} value={c}>
-                  {c}
+                  {categoryLabel(c)}
                 </option>
               ))}
             </select>
@@ -79,14 +79,14 @@ const Habits = () => {
               style={{ width: "auto" }}
               value={target}
               onChange={(e) => setTarget(e.target.value)}
-              aria-label="Weekly target"
+              aria-label="Target mingguan"
             >
-              <option value={3}>3x / week</option>
-              <option value={5}>5x / week</option>
-              <option value={7}>7x / week</option>
+              <option value={3}>3x / minggu</option>
+              <option value={5}>5x / minggu</option>
+              <option value={7}>7x / minggu</option>
             </select>
             <button type="submit" className="btn btn-primary">
-              Add
+              Tambah
             </button>
           </div>
         </form>
@@ -97,7 +97,7 @@ const Habits = () => {
           className="mt-2 border-2 border-dashed px-4 py-6 text-center text-[15px]"
           style={{ borderColor: "var(--ink)", color: "var(--mute)" }}
         >
-          No habits yet. Add one and build the week.
+          Belum ada kebiasaan. Tambahkan satu, lalu jalani minggu ini.
         </p>
       ) : (
         <div className="flex flex-col">
@@ -115,7 +115,7 @@ const Habits = () => {
                   onClick={() => checkIn(h)}
                   disabled={doneToday}
                   aria-pressed={doneToday}
-                  aria-label={doneToday ? "Already checked in today" : `Check in ${h.name}`}
+                  aria-label={doneToday ? "Sudah check-in hari ini" : `Check-in ${h.name}`}
                 >
                   <CheckIcon className="h-4 w-4" />
                 </button>
@@ -128,7 +128,7 @@ const Habits = () => {
                       ))}
                     </span>
                     <span className="pixel text-[8px]" style={{ color: "var(--mute)" }}>
-                      {count}/{h.targetFrequency} this week
+                      {count}/{h.targetFrequency} minggu ini
                     </span>
                   </div>
                 </div>
@@ -136,7 +136,7 @@ const Habits = () => {
                   className="btn"
                   style={{ padding: 8 }}
                   onClick={() => deleteHabit(h.id)}
-                  aria-label="Delete habit"
+                  aria-label="Hapus kebiasaan"
                 >
                   <TrashIcon className="h-4 w-4" />
                 </button>

@@ -54,7 +54,7 @@ export const COMPONENT_MAP = {
             {
               name: "BigGoals",
               file: "src/components/BigGoals.jsx",
-              role: "Long-term goals with progress %, milestones and priority.",
+              role: "Long-term goals broken into checkable subtasks; progress is derived from them.",
               children: [
                 {
                   name: "SectionCard",

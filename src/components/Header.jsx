@@ -13,10 +13,10 @@ const Header = () => {
 
   const status =
     todays.length === 0
-      ? "No quests lined up for today."
+      ? "Belum ada misi untuk hari ini."
       : pending === 0
-        ? "All of today's quests are done."
-        : `${pending} ${pending === 1 ? "quest" : "quests"} waiting today.`;
+        ? "Semua misi hari ini beres."
+        : `${pending} misi menunggu hari ini.`;
 
   const filled = Math.round((levelInfo.current / levelInfo.needed) * SEGMENTS);
 
@@ -52,7 +52,7 @@ const Header = () => {
         <div
           className="xpbar"
           role="progressbar"
-          aria-label="Level progress"
+          aria-label="Progres level"
           aria-valuemin={0}
           aria-valuemax={levelInfo.needed}
           aria-valuenow={levelInfo.current}
@@ -62,7 +62,7 @@ const Header = () => {
           ))}
         </div>
         <p className="mt-2 text-[13px]" style={{ color: "var(--mute)" }}>
-          {levelInfo.current} / {levelInfo.needed} XP to level {levelInfo.level + 1}
+          {levelInfo.current} / {levelInfo.needed} XP menuju level {levelInfo.level + 1}
         </p>
       </div>
     </header>
