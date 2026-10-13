@@ -1,13 +1,14 @@
 import { useState } from "react";
 import { useProductivity } from "../store/ProductivityContext";
 import { QUEST_THEME, CATEGORIES, categoryLabel } from "../lib/constants";
-import { todayKey } from "../lib/questLogic";
+import { todayKey, isAllDailyDone } from "../lib/questLogic";
+import { CELEBRATIONS, getRandomLine } from "../lib/celebrations";
 import SectionCard from "./SectionCard";
 import ConfirmDialog from "./ConfirmDialog";
 import { SwordIcon, PlusIcon, CheckIcon, TrashIcon } from "./icons";
 
 const DailyQuests = () => {
-  const { dailyQuests, addDailyQuest, toggleDailyQuest, deleteDailyQuest, notify } =
+  const { dailyQuests, habits, addDailyQuest, toggleDailyQuest, deleteDailyQuest, notify } =
     useProductivity();
   const [title, setTitle] = useState("");
   const [difficulty, setDifficulty] = useState("easy");
@@ -28,8 +29,17 @@ const DailyQuests = () => {
 
   const commitToggle = (q) => {
     toggleDailyQuest(q.id);
+    if (q.completed) {
+      notify(`-${q.xpReward} XP · misi dibuka lagi`);
+      return;
+    }
+    const after = dailyQuests.map((x) =>
+      x.id === q.id ? { ...x, completed: true } : x
+    );
     notify(
-      `${q.completed ? "-" : "+"}${q.xpReward} XP · misi ${q.completed ? "dibuka lagi" : "selesai"}`
+      isAllDailyDone(after, habits, today)
+        ? getRandomLine(CELEBRATIONS.allDaily)
+        : getRandomLine(CELEBRATIONS.quest[q.difficulty] || CELEBRATIONS.quest.easy)
     );
   };
 

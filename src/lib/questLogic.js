@@ -25,6 +25,18 @@ export const lastNDays = (n, from = new Date()) => {
   return keys;
 };
 
+/* True when nothing is pending today: semua misi hari ini kelar dan semua
+   kebiasaan aktif sudah check-in. Dipakai untuk pesan "hari ini menang". */
+export const isAllDailyDone = (quests, habits, today) => {
+  const todays = quests.filter((q) => q.date === today);
+  const activeHabits = habits.filter((h) => h.isActive);
+  return (
+    todays.length + activeHabits.length > 0 &&
+    todays.every((q) => q.completed) &&
+    activeHabits.every((h) => (h.history || []).includes(today))
+  );
+};
+
 export const LEVEL_STEP = 100;
 
 /* Level = floor(XP / 100) + 1 (design.md §5) */

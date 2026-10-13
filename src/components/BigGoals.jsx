@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useProductivity } from "../store/ProductivityContext";
 import { PRIORITY_THEME, CATEGORIES, categoryLabel } from "../lib/constants";
+import { CELEBRATIONS, getRandomLine } from "../lib/celebrations";
 import SectionCard from "./SectionCard";
 import ConfirmDialog from "./ConfirmDialog";
 import { TargetIcon, PlusIcon, TrashIcon, CheckIcon } from "./icons";
@@ -70,11 +71,26 @@ const BigGoals = () => {
 
     if (subtask.done) {
       notify(`-5 XP · ${subtask.title}`);
-    } else if (willComplete) {
-      notify(`+${goal.xpReward} XP · tujuan tercapai!`);
-    } else {
-      notify(`+5 XP · ${subtask.title}`);
+      return;
     }
+    if (willComplete) {
+      const after = bigGoals.map((g) =>
+        g.id === goal.id ? { ...g, completed: true } : g
+      );
+      notify(
+        after.every((g) => g.completed)
+          ? getRandomLine(CELEBRATIONS.allGoals)
+          : getRandomLine(CELEBRATIONS.goal)
+      );
+      return;
+    }
+    const total = (goal.subtasks || []).length;
+    const percent = total
+      ? Math.round(((others.filter((t) => t.done).length + 1) / total) * 100)
+      : 0;
+    if (percent >= 75) notify(CELEBRATIONS.subtaskLast);
+    else if (percent >= 50) notify(CELEBRATIONS.subtaskHalf);
+    else notify(getRandomLine(CELEBRATIONS.subtask));
   };
 
   const toggle = (goal, subtask) => {

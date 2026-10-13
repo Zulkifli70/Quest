@@ -1,13 +1,14 @@
 import { useState } from "react";
 import { useProductivity } from "../store/ProductivityContext";
 import { CATEGORIES, categoryLabel } from "../lib/constants";
-import { todayKey, lastNDays } from "../lib/questLogic";
+import { todayKey, lastNDays, isAllDailyDone } from "../lib/questLogic";
+import { CELEBRATIONS, getRandomLine } from "../lib/celebrations";
 import SectionCard from "./SectionCard";
 import ConfirmDialog from "./ConfirmDialog";
 import { FlameIcon, PlusIcon, CheckIcon, TrashIcon } from "./icons";
 
 const Habits = () => {
-  const { habits, addHabit, completeHabit, deleteHabit, notify } =
+  const { habits, dailyQuests, addHabit, completeHabit, deleteHabit, notify } =
     useProductivity();
   const [name, setName] = useState("");
   const [category, setCategory] = useState("Health");
@@ -29,7 +30,14 @@ const Habits = () => {
 
   const commitCheckIn = (h) => {
     completeHabit(h.id);
-    notify(`+8 XP · ${h.name}`);
+    const after = habits.map((x) =>
+      x.id === h.id ? { ...x, history: [...(x.history || []), today] } : x
+    );
+    notify(
+      isAllDailyDone(dailyQuests, after, today)
+        ? getRandomLine(CELEBRATIONS.allDaily)
+        : `+8 XP · ${h.name}`
+    );
   };
 
   const checkIn = (h) => {
