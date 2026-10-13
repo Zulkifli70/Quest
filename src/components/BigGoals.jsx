@@ -64,7 +64,8 @@ const BigGoals = () => {
 
   const commitToggle = (goal, subtask) => {
     const others = (goal.subtasks || []).filter((t) => t.id !== subtask.id);
-    const willComplete = !subtask.done && others.every((t) => t.done) && others.length > 0;
+    const willComplete =
+      !subtask.done && others.every((t) => t.done) && others.length > 0;
     toggleSubtask(goal.id, subtask.id);
 
     if (subtask.done) {
@@ -209,21 +210,36 @@ const BigGoals = () => {
               <div
                 key={g.id}
                 className="border-4 p-3"
-                style={{ borderColor: "var(--ink)", background: "var(--panel2)" }}
+                style={{
+                  borderColor: "var(--ink)",
+                  background: "var(--panel2)",
+                }}
               >
                 <div className="flex items-start justify-between gap-3">
                   <div className="flex items-center gap-3">
-                    <TargetIcon className="h-5 w-5" style={{ color: theme.color }} />
+                    <TargetIcon
+                      className="h-5 w-5"
+                      style={{ color: theme.color }}
+                    />
                     <div className="min-w-0">
-                      <p className="pixel text-[9px]" style={{ color: "var(--gold)" }}>
+                      <p
+                        className="pixel text-[9px]"
+                        style={{ color: "var(--gold)" }}
+                      >
                         {g.title}
                       </p>
-                      <p className="mt-1 text-[13px]" style={{ color: "var(--mute)" }}>
+                      <p
+                        className="mt-1 text-[13px]"
+                        style={{ color: "var(--mute)" }}
+                      >
                         {theme.label} · {target} · {g.xpReward} XP
                       </p>
                     </div>
                   </div>
-                  <span className="pixel text-[9px]" style={{ color: "var(--gold)" }}>
+                  <span
+                    className="pixel text-[9px]"
+                    style={{ color: "var(--gold)" }}
+                  >
                     {percent}%
                   </span>
                 </div>
@@ -241,7 +257,11 @@ const BigGoals = () => {
                           data-done={t.done}
                           onClick={() => toggle(g, t)}
                           aria-pressed={t.done}
-                          aria-label={t.done ? `Batalkan ${t.title}` : `Selesaikan ${t.title}`}
+                          aria-label={
+                            t.done
+                              ? `Batalkan ${t.title}`
+                              : `Selesaikan ${t.title}`
+                          }
                         >
                           <CheckIcon className="h-4 w-4" />
                         </button>
@@ -277,7 +297,9 @@ const BigGoals = () => {
                     <input
                       className="input"
                       value={drafts[g.id] || ""}
-                      onChange={(e) => setDrafts((d) => ({ ...d, [g.id]: e.target.value }))}
+                      onChange={(e) =>
+                        setDrafts((d) => ({ ...d, [g.id]: e.target.value }))
+                      }
                       placeholder="Tambah langkah — mis. pelajari DSA"
                       aria-label={`Tambah langkah ke ${g.title}`}
                     />
@@ -292,16 +314,23 @@ const BigGoals = () => {
                 )}
 
                 <div className="mt-3 flex items-center justify-between gap-3">
-                  <span className="pixel text-[8px]" style={{ color: "var(--mute)" }}>
+                  <span
+                    className="pixel text-[8px]"
+                    style={{ color: "var(--mute)" }}
+                  >
                     {done}/{subtasks.length} langkah
                   </span>
                   <div className="flex items-center gap-2">
                     <button
                       className="btn"
-                      onClick={() => setEditingId((id) => (id === g.id ? null : g.id))}
+                      onClick={() =>
+                        setEditingId((id) => (id === g.id ? null : g.id))
+                      }
                       aria-pressed={editingId === g.id}
                       aria-label={
-                        editingId === g.id ? `Selesai mengubah ${g.title}` : `Ubah ${g.title}`
+                        editingId === g.id
+                          ? `Selesai mengubah ${g.title}`
+                          : `Ubah ${g.title}`
                       }
                     >
                       <span className="pixel text-[8px]">
@@ -313,7 +342,7 @@ const BigGoals = () => {
                       onClick={() => deleteBigGoal(g.id)}
                       aria-label="Hapus tujuan"
                     >
-                      <TrashIcon className="h-4 w-4" />
+                      <TrashIcon className="h-4 w-4 text-(--ember)" />
                     </button>
                   </div>
                 </div>
