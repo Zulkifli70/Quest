@@ -75,12 +75,12 @@ const BigGoals = () => {
     }
     if (willComplete) {
       const after = bigGoals.map((g) =>
-        g.id === goal.id ? { ...g, completed: true } : g
+        g.id === goal.id ? { ...g, completed: true } : g,
       );
       notify(
         after.every((g) => g.completed)
           ? getRandomLine(CELEBRATIONS.allGoals)
-          : getRandomLine(CELEBRATIONS.goal)
+          : getRandomLine(CELEBRATIONS.goal),
       );
       return;
     }
@@ -297,7 +297,7 @@ const BigGoals = () => {
                             onClick={() => deleteSubtask(g.id, t.id)}
                             aria-label={`Hapus ${t.title}`}
                           >
-                            <TrashIcon className="h-3.5 w-3.5" />
+                            <TrashIcon className="h-3.5 w-3.5 text-(--ember)" />
                           </button>
                         )}
                       </div>

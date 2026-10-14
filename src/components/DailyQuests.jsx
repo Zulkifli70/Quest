@@ -8,8 +8,14 @@ import ConfirmDialog from "./ConfirmDialog";
 import { SwordIcon, PlusIcon, CheckIcon, TrashIcon } from "./icons";
 
 const DailyQuests = () => {
-  const { dailyQuests, habits, addDailyQuest, toggleDailyQuest, deleteDailyQuest, notify } =
-    useProductivity();
+  const {
+    dailyQuests,
+    habits,
+    addDailyQuest,
+    toggleDailyQuest,
+    deleteDailyQuest,
+    notify,
+  } = useProductivity();
   const [title, setTitle] = useState("");
   const [difficulty, setDifficulty] = useState("easy");
   const [category, setCategory] = useState("Work");
@@ -34,12 +40,14 @@ const DailyQuests = () => {
       return;
     }
     const after = dailyQuests.map((x) =>
-      x.id === q.id ? { ...x, completed: true } : x
+      x.id === q.id ? { ...x, completed: true } : x,
     );
     notify(
       isAllDailyDone(after, habits, today)
         ? getRandomLine(CELEBRATIONS.allDaily)
-        : getRandomLine(CELEBRATIONS.quest[q.difficulty] || CELEBRATIONS.quest.easy)
+        : getRandomLine(
+            CELEBRATIONS.quest[q.difficulty] || CELEBRATIONS.quest.easy,
+          ),
     );
   };
 
@@ -73,7 +81,11 @@ const DailyQuests = () => {
             placeholder="Misi baru — mis. baca 20 halaman"
             aria-label="Judul misi baru"
           />
-          <button type="submit" className="btn btn-primary btn-icon" aria-label="Tambah misi">
+          <button
+            type="submit"
+            className="btn btn-primary btn-icon"
+            aria-label="Tambah misi"
+          >
             <PlusIcon className="h-4 w-4" />
           </button>
         </div>
@@ -123,7 +135,11 @@ const DailyQuests = () => {
                   data-done={q.completed}
                   onClick={() => toggle(q)}
                   aria-pressed={q.completed}
-                  aria-label={q.completed ? "Tandai misi belum selesai" : "Selesaikan misi"}
+                  aria-label={
+                    q.completed
+                      ? "Tandai misi belum selesai"
+                      : "Selesaikan misi"
+                  }
                 >
                   <CheckIcon className="h-4 w-4" />
                 </button>
@@ -137,8 +153,12 @@ const DailyQuests = () => {
                   >
                     {q.title}
                   </p>
-                  <p className="pixel mt-2 text-[8px]" style={{ color: theme.color }}>
-                    {theme.label} · {q.xpReward} XP · {categoryLabel(q.category)}
+                  <p
+                    className="pixel mt-2 text-[8px]"
+                    style={{ color: theme.color }}
+                  >
+                    {theme.label} · {q.xpReward} XP ·{" "}
+                    {categoryLabel(q.category)}
                   </p>
                 </div>
                 <button
@@ -147,7 +167,7 @@ const DailyQuests = () => {
                   onClick={() => deleteDailyQuest(q.id)}
                   aria-label="Hapus misi"
                 >
-                  <TrashIcon className="h-4 w-4" />
+                  <TrashIcon className="h-4 w-4 text-(--ember)" />
                 </button>
               </div>
             );
@@ -160,16 +180,27 @@ const DailyQuests = () => {
           className="mt-4 border-2 border-dashed p-3"
           style={{ borderColor: "var(--ink)" }}
         >
-          <summary className="pixel cursor-pointer text-[8px]" style={{ color: "var(--mute)" }}>
-            Hari sebelumnya ({dailyQuests.filter((q) => q.date !== today).length})
+          <summary
+            className="pixel cursor-pointer text-[8px]"
+            style={{ color: "var(--mute)" }}
+          >
+            Hari sebelumnya (
+            {dailyQuests.filter((q) => q.date !== today).length})
           </summary>
           <div className="mt-3 flex flex-col gap-2">
             {dailyQuests
               .filter((q) => q.date !== today)
               .slice(0, 6)
               .map((q) => (
-                <div key={q.id} className="flex items-center justify-between gap-3 text-[14px]">
-                  <span style={{ color: q.completed ? "var(--mute)" : "var(--text)" }}>
+                <div
+                  key={q.id}
+                  className="flex items-center justify-between gap-3 text-[14px]"
+                >
+                  <span
+                    style={{
+                      color: q.completed ? "var(--mute)" : "var(--text)",
+                    }}
+                  >
                     {q.title} · {q.date}
                   </span>
                   <button

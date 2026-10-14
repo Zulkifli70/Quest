@@ -31,12 +31,12 @@ const Habits = () => {
   const commitCheckIn = (h) => {
     completeHabit(h.id);
     const after = habits.map((x) =>
-      x.id === h.id ? { ...x, history: [...(x.history || []), today] } : x
+      x.id === h.id ? { ...x, history: [...(x.history || []), today] } : x,
     );
     notify(
       isAllDailyDone(dailyQuests, after, today)
         ? getRandomLine(CELEBRATIONS.allDaily)
-        : `+8 XP · ${h.name}`
+        : `+8 XP · ${h.name}`,
     );
   };
 
@@ -158,7 +158,7 @@ const Habits = () => {
                   onClick={() => deleteHabit(h.id)}
                   aria-label="Hapus kebiasaan"
                 >
-                  <TrashIcon className="h-4 w-4" />
+                  <TrashIcon className="h-4 w-4 text-(--ember)" />
                 </button>
               </div>
             );
