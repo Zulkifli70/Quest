@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useMemo, useRef, useState } from "react";
 import { DEFAULT_STATE, QUEST_THEME } from "../lib/constants";
 import { uid, todayKey, levelFromXP } from "../lib/questLogic";
+import { supabase } from "../lib/supabase";
 
 /* eslint-disable react-refresh/only-export-components */
 const STORAGE_KEY = "zulk-coin:productivity:v1";
@@ -10,20 +11,24 @@ const ProductivityContext = createContext(null);
 const HABIT_XP = 8;
 const SUBTASK_XP = 5;
 
-const loadState = () => {
+const normalizeState = (parsed) => {
+  if (!parsed || typeof parsed !== "object") return { ...DEFAULT_STATE };
+  return {
+    ...DEFAULT_STATE,
+    ...parsed,
+    bigGoals: (parsed.bigGoals || []).map((g) => ({
+      ...g,
+      subtasks: g.subtasks || [],
+      completed: g.completed || false,
+    })),
+  };
+};
+
+const loadLocalState = () => {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (raw) {
-      const parsed = JSON.parse(raw);
-      return {
-        ...DEFAULT_STATE,
-        ...parsed,
-        bigGoals: (parsed.bigGoals || []).map((g) => ({
-          ...g,
-          subtasks: g.subtasks || [],
-          completed: g.completed || false,
-        })),
-      };
+      return normalizeState(JSON.parse(raw));
     }
   } catch {
     /* ignore */
@@ -32,10 +37,14 @@ const loadState = () => {
 };
 
 export const ProductivityProvider = ({ children }) => {
-  const [state, setState] = useState(loadState);
+  const [state, setState] = useState(loadLocalState);
   const [toast, setToast] = useState(null);
   const [levelUp, setLevelUp] = useState(null);
+  const [session, setSession] = useState(null);
+  const [user, setUser] = useState(null);
+  const [loadingAuth, setLoadingAuth] = useState(true);
   const prevLevel = useRef(levelFromXP(state.totalXP).level);
+  // const hasMigrated = useRef(false);
 
   useEffect(() => {
     try {
@@ -44,6 +53,23 @@ export const ProductivityProvider = ({ children }) => {
       /* ignore */
     }
   }, [state]);
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+      setUser(session?.user ?? null);
+      setLoadingAuth(false);
+    });
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session);
+      setUser(session?.user ?? null);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
 
   useEffect(() => {
     if (!toast) return undefined;
@@ -56,6 +82,53 @@ export const ProductivityProvider = ({ children }) => {
     if (level > prevLevel.current) setLevelUp({ level });
     prevLevel.current = level;
   }, [state.totalXP]);
+
+  useEffect(() => {
+    const loadRemote = async () => {
+      if (!user) return;
+      const { data, error } = await supabase
+        .from("user_state")
+        .select("state_json")
+        .eq("user_id", user.id)
+        .single();
+      if (error && error.code !== "PGRST116") {
+        try {
+          setToast({ id: uid(), message: error.message || "Gagal memuat data" });
+        } catch {
+          /* ignore */
+        }
+        return;
+      }
+      if (data?.state_json) {
+        const loaded = normalizeState(data.state_json);
+        setState(loaded);
+      } else {
+        // no remote state, maybe migrate local
+        const local = loadLocalState();
+        if (local && (local.dailyQuests.length || local.habits.length || local.bigGoals.length || local.totalXP > 0)) {
+          await supabase
+            .from("user_state")
+            .upsert({ user_id: user.id, state_json: local, updated_at: new Date().toISOString() });
+        }
+        setState(local);
+      }
+    };
+    loadRemote();
+  }, [user]);
+
+  useEffect(() => {
+    const syncRemote = async () => {
+      if (!user) return;
+      try {
+        await supabase
+          .from("user_state")
+          .upsert({ user_id: user.id, state_json: state, updated_at: new Date().toISOString() });
+      } catch {
+        // ignore
+      }
+    };
+    syncRemote();
+  }, [user, state]);
 
   const value = useMemo(() => {
     return {
@@ -210,8 +283,29 @@ export const ProductivityProvider = ({ children }) => {
 
       gainXP: (amount) =>
         setState((s) => ({ ...s, totalXP: Math.max(0, s.totalXP + amount) })),
+
+      login: async (emailOrUsername, password) => {
+        const t = emailOrUsername.trim().toLowerCase();
+        const email = t.includes("@") ? t : `${t.replace(/[^a-z0-9._-]/g, "")}@local.zq`;
+        return supabase.auth.signInWithPassword({ email, password });
+      },
+
+      register: async (emailOrUsername, password) => {
+        const t = emailOrUsername.trim().toLowerCase();
+        const email = t.includes("@") ? t : `${t.replace(/[^a-z0-9._-]/g, "")}@local.zq`;
+        return supabase.auth.signUp({ email, password });
+      },
+
+      logout: async () => {
+        await supabase.auth.signOut();
+      },
+
+      session,
+      user,
+      isAuthed: !!user,
+      loadingAuth,
     };
-  }, [state, toast, levelUp]);
+  }, [state, toast, levelUp, session, user, loadingAuth]);
 
   return (
     <ProductivityContext.Provider value={value}>{children}</ProductivityContext.Provider>

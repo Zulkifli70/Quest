@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ProductivityProvider } from "./store/ProductivityContext";
+import { ProductivityProvider, useProductivity } from "./store/ProductivityContext";
 import Header from "./components/Header";
 import { Nav } from "./components/Nav";
 import DailyQuests from "./components/DailyQuests";
@@ -7,8 +7,10 @@ import Habits from "./components/Habits";
 import BigGoals from "./components/BigGoals";
 import ToastHost from "./components/Toast";
 import Help from "./components/Help";
+import Auth from "./components/Auth";
 
 const Dashboard = () => {
+  const { logout } = useProductivity();
   const [tab, setTab] = useState("quests");
 
   return (
@@ -21,6 +23,11 @@ const Dashboard = () => {
         }}
       >
         <Header />
+        <div className="mt-3 flex justify-end">
+          <button className="btn" onClick={logout}>
+            <span className="pixel text-[8px]">Logout</span>
+          </button>
+        </div>
         <Nav tab={tab} setTab={setTab} />
 
         <div className="mt-6">
@@ -42,10 +49,22 @@ const Dashboard = () => {
   );
 };
 
+const Root = () => {
+  const { isAuthed, loadingAuth } = useProductivity();
+  if (loadingAuth) return null;
+  return isAuthed ? (
+    <>
+      <Dashboard />
+      <Help />
+    </>
+  ) : (
+    <Auth />
+  );
+};
+
 const App = () => (
   <ProductivityProvider>
-    <Dashboard />
-    <Help />
+    <Root />
   </ProductivityProvider>
 );
 
