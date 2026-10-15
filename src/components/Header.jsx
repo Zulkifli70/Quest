@@ -22,14 +22,29 @@ const Header = () => {
   const filled = Math.round((levelInfo.current / levelInfo.needed) * SEGMENTS);
 
   return (
-    <header className="panel" style={{ borderColor: getTierColor(levelInfo.level), borderStyle: getTierBorderStyle(levelInfo.level) }}>
+    <header
+      className="panel"
+      style={{
+        borderColor: getTierColor(levelInfo.level),
+        borderStyle: getTierBorderStyle(levelInfo.level),
+      }}
+    >
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-4">
-          <div className="level-box" style={{ borderColor: getTierColor(levelInfo.level), borderStyle: getTierBorderStyle(levelInfo.level) }}>
+          <div
+            className="level-box"
+            style={{
+              borderColor: getTierColor(levelInfo.level),
+              borderStyle: getTierBorderStyle(levelInfo.level),
+            }}
+          >
             <p className="pixel text-[8px]" style={{ color: "var(--mute)" }}>
               Level
             </p>
-            <p className="pixel mt-2 text-[15px]" style={{ color: "var(--gold)" }}>
+            <p
+              className="pixel mt-2 text-[15px]"
+              style={{ color: "var(--gold)" }}
+            >
               {levelInfo.level}
             </p>
             <p
@@ -45,7 +60,7 @@ const Header = () => {
             </h1>
             {user?.email && (
               <p className="mt-2 text-[15px]" style={{ color: "var(--mute)" }}>
-                {user.email.split("@")[0]}
+                Halo, {user.email.split("@")[0]}
               </p>
             )}
             <p className="mt-2 text-[15px]" style={{ color: "var(--mute)" }}>
@@ -54,7 +69,10 @@ const Header = () => {
           </div>
         </div>
 
-        <div className="flex items-center gap-2" style={{ color: "var(--gold)" }}>
+        <div
+          className="flex items-center gap-2"
+          style={{ color: "var(--gold)" }}
+        >
           <ZapIcon className="h-4 w-4" />
           <span className="pixel text-[10px]">{totalXP} XP</span>
         </div>
@@ -74,7 +92,8 @@ const Header = () => {
           ))}
         </div>
         <p className="mt-2 text-[13px]" style={{ color: "var(--mute)" }}>
-          {levelInfo.current} / {levelInfo.needed} XP menuju level {levelInfo.level + 1}
+          {levelInfo.current} / {levelInfo.needed} XP menuju level{" "}
+          {levelInfo.level + 1}
         </p>
       </div>
     </header>
