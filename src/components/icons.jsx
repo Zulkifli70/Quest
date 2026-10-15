@@ -91,6 +91,26 @@ const ART = {
     "........",
     "........",
   ],
+  sun: [
+    ".#..#...",
+    "..##....",
+    "######..",
+    "..##....",
+    ".#..#...",
+    "........",
+    "........",
+    "........",
+  ],
+  moon: [
+    ".######.",
+    "####....",
+    "####....",
+    "###.....",
+    "###.....",
+    "####....",
+    "####....",
+    ".######.",
+  ],
 };
 
 const Pixel = ({ art, className = "h-5 w-5", ...props }) => (
@@ -104,8 +124,10 @@ const Pixel = ({ art, className = "h-5 w-5", ...props }) => (
   >
     {art.map((row, y) =>
       [...row].map((cell, x) =>
-        cell !== "." ? <rect key={`${x}-${y}`} x={x} y={y} width="1" height="1" /> : null
-      )
+        cell !== "." ? (
+          <rect key={`${x}-${y}`} x={x} y={y} width="1" height="1" />
+        ) : null,
+      ),
     )}
   </svg>
 );
@@ -118,7 +140,15 @@ export const TrashIcon = (props) => <Pixel art={ART.trash} {...props} />;
 export const TargetIcon = (props) => <Pixel art={ART.target} {...props} />;
 export const StarIcon = (props) => <Pixel art={ART.star} {...props} />;
 export const ZapIcon = (props) => <Pixel art={ART.zap} {...props} />;
-export const ChevronDownIcon = (props) => <Pixel art={ART.chevron} {...props} />;
-export const ChevronUpIcon = (props) => (
-  <Pixel art={ART.chevron} {...props} className={`${props.className || "h-5 w-5"} rotate-180`} />
+export const ChevronDownIcon = (props) => (
+  <Pixel art={ART.chevron} {...props} />
 );
+export const ChevronUpIcon = (props) => (
+  <Pixel
+    art={ART.chevron}
+    {...props}
+    className={`${props.className || "h-5 w-5"} rotate-180`}
+  />
+);
+export const SunIcon = (props) => <Pixel art={ART.sun} {...props} />;
+export const MoonIcon = (props) => <Pixel art={ART.moon} {...props} />;

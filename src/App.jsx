@@ -11,6 +11,7 @@ import BigGoals from "./components/BigGoals";
 import ToastHost from "./components/Toast";
 import Help from "./components/Help";
 import Auth from "./components/Auth";
+import { SunIcon, MoonIcon } from "./components/icons";
 
 const Dashboard = () => {
   const { logout } = useProductivity();
@@ -32,7 +33,8 @@ const Dashboard = () => {
   return (
     <div className="min-h-screen" style={{ background: "var(--bg)" }}>
       <div className="mt-3 flex justify-between absolute left-5 right-5">
-        <button className="btn-logout" onClick={toggleTheme}>
+        <button className="btn-logout flex items-center gap-1.5" onClick={toggleTheme}>
+          {theme === "dark" ? <SunIcon className="h-4 w-4" /> : <MoonIcon className="h-4 w-4" />}
           <span className="pixel text-[8px]">
             {theme === "dark" ? "Light" : "Dark"}
           </span>
