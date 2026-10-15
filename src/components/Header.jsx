@@ -21,6 +21,8 @@ const Header = () => {
 
   const filled = Math.round((levelInfo.current / levelInfo.needed) * SEGMENTS);
 
+  const username = user.email.split("@")[0];
+
   return (
     <header
       className="panel"
@@ -60,7 +62,7 @@ const Header = () => {
             </h1>
             {user?.email && (
               <p className="mt-2 text-[15px]" style={{ color: "var(--mute)" }}>
-                Halo, {user.email.split("@")[0]}
+                Halo, {username.charAt(0).toUpperCase() + username.slice(1)}
               </p>
             )}
             <p className="mt-2 text-[15px]" style={{ color: "var(--mute)" }}>
