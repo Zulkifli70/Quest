@@ -1,5 +1,8 @@
 import { useState } from "react";
-import { ProductivityProvider, useProductivity } from "./store/ProductivityContext";
+import {
+  ProductivityProvider,
+  useProductivity,
+} from "./store/ProductivityContext";
 import Header from "./components/Header";
 import { Nav } from "./components/Nav";
 import DailyQuests from "./components/DailyQuests";
@@ -15,6 +18,11 @@ const Dashboard = () => {
 
   return (
     <div className="min-h-screen" style={{ background: "var(--bg)" }}>
+      <div className="mt-3 flex justify-end absolute right-5">
+        <button className="btn-logout" onClick={logout}>
+          <span className="pixel text-[8px]">Logout</span>
+        </button>
+      </div>
       <main
         className="mx-auto max-w-3xl px-4 py-6"
         style={{
@@ -23,11 +31,6 @@ const Dashboard = () => {
         }}
       >
         <Header />
-        <div className="mt-3 flex justify-end">
-          <button className="btn" onClick={logout}>
-            <span className="pixel text-[8px]">Logout</span>
-          </button>
-        </div>
         <Nav tab={tab} setTab={setTab} />
 
         <div className="mt-6">

@@ -177,6 +177,24 @@ button {
   transform: translate(-2px, -2px);
 }
 
+.btn-logout {
+  border: 3px solid var(--ink);
+  box-shadow: 3px 3px 0 var(--ink);
+  background: var(--ember);
+  color: var(--text);
+  font-weight: 600;
+  line-height: 1;
+  padding: 9px 14px;
+  transition:
+    transform 0.12s steps(2),
+    box-shadow 0.12s steps(2);
+}
+
+.btn-logout:hover {
+  box-shadow: 4px 4px 0 var(--ink);
+  transform: translate(-2px, -2px);
+}
+
 /* ---------- Inputs ---------- */
 
 .input {
