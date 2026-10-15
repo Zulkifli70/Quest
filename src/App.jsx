@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   ProductivityProvider,
   useProductivity,
@@ -15,10 +15,28 @@ import Auth from "./components/Auth";
 const Dashboard = () => {
   const { logout } = useProductivity();
   const [tab, setTab] = useState("quests");
+  const [theme, setTheme] = useState(() => {
+    return localStorage.getItem("zq-theme") || "dark";
+  });
+
+  useEffect(() => {
+    const root = document.documentElement;
+    root.setAttribute("data-theme", theme);
+    localStorage.setItem("zq-theme", theme);
+  }, [theme]);
+
+  const toggleTheme = () => {
+    setTheme((prev) => (prev === "dark" ? "light" : "dark"));
+  };
 
   return (
     <div className="min-h-screen" style={{ background: "var(--bg)" }}>
-      <div className="mt-3 flex justify-end absolute right-5">
+      <div className="mt-3 flex justify-between absolute left-5 right-5">
+        <button className="btn-logout" onClick={toggleTheme}>
+          <span className="pixel text-[8px]">
+            {theme === "dark" ? "Light" : "Dark"}
+          </span>
+        </button>
         <button className="btn-logout" onClick={logout}>
           <span className="pixel text-[8px]">Logout</span>
         </button>
