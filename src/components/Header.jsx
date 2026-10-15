@@ -6,7 +6,7 @@ import { ZapIcon } from "./icons";
 const SEGMENTS = 20;
 
 const Header = () => {
-  const { levelInfo, totalXP, dailyQuests } = useProductivity();
+  const { levelInfo, totalXP, dailyQuests, user } = useProductivity();
 
   const today = todayKey();
   const todays = dailyQuests.filter((q) => q.date === today);
@@ -43,6 +43,11 @@ const Header = () => {
             <h1 className="pixel text-[12px]" style={{ color: "var(--gold)" }}>
               Productivity Quest
             </h1>
+            {user?.email && (
+              <p className="mt-2 text-[15px]" style={{ color: "var(--mute)" }}>
+                {user.email.split("@")[0]}
+              </p>
+            )}
             <p className="mt-2 text-[15px]" style={{ color: "var(--mute)" }}>
               {status}
             </p>
