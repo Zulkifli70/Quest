@@ -32,7 +32,7 @@ const Dashboard = () => {
 
   return (
     <div className="min-h-screen" style={{ background: "var(--bg)" }}>
-      <div className="mt-3 flex justify-between absolute left-5 right-5">
+      <div className="mt-3 flex justify-end absolute right-5 gap-2">
         <button className="btn-logout flex items-center gap-1.5" onClick={toggleTheme}>
           {theme === "dark" ? <SunIcon className="h-4 w-4" /> : <MoonIcon className="h-4 w-4" />}
           <span className="pixel text-[8px]">
