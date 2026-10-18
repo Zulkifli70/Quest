@@ -145,16 +145,30 @@ const Help = () => {
                   Prioritas (khusus Tujuan): Rendah, Sedang, Tinggi.
                 </p>
               </section>
-
               <section>
                 <h3>Menyimpan &amp; reset data</h3>
                 <p>
                   Data tersimpan otomatis di peramban ini. Untuk mulai dari nol,
-                  buka konsol peramban (F12) lalu jalankan:{" "}
+                  buka konsol peramban (F12) lalu jalankan:
                   <code>
                     localStorage.removeItem("zulk-coin:productivity:v1");
                     location.reload();
                   </code>
+                </p>
+              </section>
+
+              <section>
+                <h3>Simpan ke GitHub</h3>
+                <p>
+                  Repositori ini dihosting di GitHub. Setelah perubahan selesai,
+                  jalankan di terminal:
+                </p>
+                <code>git add -A</code><br />
+                <code>git commit -m "pesan commit"</code><br />
+                <code>git push</code>
+                <p>
+                  Pastikan kamu sedang berada di folder project sebelum mengetik
+                  perintah di atas.
                 </p>
               </section>
             </div>
