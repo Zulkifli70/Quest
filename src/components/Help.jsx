@@ -33,7 +33,10 @@ const Help = () => {
             onClick={(e) => e.stopPropagation()}
           >
             <header className="help-head">
-              <h2 className="pixel text-[10px]" style={{ color: "var(--gold)" }}>
+              <h2
+                className="pixel text-[10px]"
+                style={{ color: "var(--gold)" }}
+              >
                 Panduan
               </h2>
               <button
@@ -66,9 +69,9 @@ const Help = () => {
                   </li>
                   <li>
                     <b>Kebiasaan</b> — kegiatan berulang yang diukur per minggu,
-                    bukan berturut-turut. Tiap check-in <b>+8 XP</b>. Kotak kecil
-                    menunjukkan berapa kali kamu melakukannya minggu ini dari
-                    target (3/5/7x). Bolong sehari tidak ada hukuman.
+                    bukan berturut-turut. Tiap check-in <b>+8 XP</b>. Kotak
+                    kecil menunjukkan berapa kali kamu melakukannya minggu ini
+                    dari target (3/5/7x). Bolong sehari tidak ada hukuman.
                   </li>
                 </ul>
               </section>
@@ -82,7 +85,8 @@ const Help = () => {
                   </li>
                   <li>
                     <b>Kebiasaan</b> — di tab Kebiasaan, tekan tombol <b>+</b>,
-                    isi nama, kategori, dan target per minggu, lalu <b>Tambah</b>.
+                    isi nama, kategori, dan target per minggu, lalu{" "}
+                    <b>Tambah</b>.
                   </li>
                   <li>
                     <b>Tujuan</b> — di tab Tujuan, tekan tombol <b>+</b>, isi
@@ -122,15 +126,40 @@ const Help = () => {
               </section>
 
               <section>
-                <h3>XP &amp; Level</h3>
+                <h3>XP &amp; Level &amp; Tier</h3>
                 <ul>
                   <li>Misi: Mudah 10, Sedang 25, Sulit 50 XP.</li>
                   <li>Kebiasaan: 8 XP per check-in.</li>
                   <li>Langkah tujuan: 5 XP, plus bonus saat tujuan tuntas.</li>
                   <li>
-                      Level butuh XP makin banyak tiap naik: mulai 100, lalu
-                      150, 200, dst.
-                    </li>
+                    Level butuh XP makin banyak tiap naik: mulai 100, lalu 150,
+                    200, dst.
+                  </li>
+                  <li>
+                    <b>Tier Level:</b>
+                    <div
+                      style={{
+                        marginTop: "6px",
+                        display: "grid",
+                        gridTemplateColumns: "1fr 1fr",
+                        gap: "4px",
+                        fontSize: "11px",
+                      }}
+                    >
+                      <div>🛡️ Lv 1+ : Recruit</div>
+                      <div>⚔️ Lv 11+: Adventurer</div>
+                      <div>🗡️ Lv 21+: Knight</div>
+                      <div>🎖️ Lv 31+: Commander</div>
+                      <div>⚜️ Lv 41+: Viscount</div>
+                      <div>🏅 Lv 51+: Marquess</div>
+                      <div>💎 Lv 61+: Duke</div>
+                      <div>🌟 Lv 71+: Hero</div>
+                      <div>👑 Lv 81+: King</div>
+                      <div>🔥 Lv 91+: Legend</div>
+                      <div>⚡ Lv 101+: Myth</div>
+                      <div>🌌 Lv 111+: Immortal</div>
+                    </div>
+                  </li>
                   <li>
                     Membatalkan centang mengurangi XP yang sama — supaya tidak
                     bisa curang.
@@ -163,8 +192,10 @@ const Help = () => {
                   Repositori ini dihosting di GitHub. Setelah perubahan selesai,
                   jalankan di terminal:
                 </p>
-                <code>git add -A</code><br />
-                <code>git commit -m "pesan commit"</code><br />
+                <code>git add -A</code>
+                <br />
+                <code>git commit -m "pesan commit"</code>
+                <br />
                 <code>git push</code>
                 <p>
                   Pastikan kamu sedang berada di folder project sebelum mengetik
