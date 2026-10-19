@@ -174,17 +174,31 @@ const Help = () => {
                   Prioritas (khusus Tujuan): Rendah, Sedang, Tinggi.
                 </p>
               </section>
-              <section>
-                <h3>Menyimpan &amp; reset data</h3>
-                <p>
-                  Data tersimpan otomatis di peramban ini. Untuk mulai dari nol,
-                  buka konsol peramban (F12) lalu jalankan:
-                  <code>
-                    localStorage.removeItem("zulk-coin:productivity:v1");
-                    location.reload();
-                  </code>
-                </p>
-              </section>
+               <section>
+                 <h3>Menyimpan &amp; reset data</h3>
+                 <p>
+                   Data tersimpan otomatis di peramban ini. Untuk mulai dari nol,
+                   buka konsol peramban (F12) lalu jalankan atau klik tombol reset di bawah:
+                   <code>
+                     localStorage.removeItem("zulk-coin:productivity:v1");
+                     location.reload();
+                   </code>
+                 </p>
+                 <div style={{ marginTop: "10px" }}>
+                   <button
+                     className="btn"
+                     style={{ borderColor: "var(--ember)", color: "var(--ember)" }}
+                     onClick={() => {
+                       if (confirm("Reset semua progress ke awal?")) {
+                         localStorage.removeItem("zulk-coin:productivity:v1");
+                         location.reload();
+                       }
+                     }}
+                   >
+                     <span className="pixel text-[8px]">Reset Data Game</span>
+                   </button>
+                 </div>
+               </section>
 
               <section>
                 <h3>Simpan ke GitHub</h3>
