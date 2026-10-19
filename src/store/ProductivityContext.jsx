@@ -36,13 +36,28 @@ const loadLocalState = () => {
   return { ...DEFAULT_STATE };
 };
 
+// Sync-read supabase session so UI renders immediately (no auth roundtrip).
+const readStoredSession = () => {
+  try {
+    const key = Object.keys(localStorage).find(
+      (k) => k.startsWith("sb-") && k.endsWith("-auth-token")
+    );
+    if (!key) return null;
+    const token = JSON.parse(localStorage.getItem(key));
+    return token?.access_token && token?.user ? token : null;
+  } catch {
+    return null;
+  }
+};
+
 export const ProductivityProvider = ({ children }) => {
   const [state, setState] = useState(loadLocalState);
   const [toast, setToast] = useState(null);
   const [levelUp, setLevelUp] = useState(null);
-  const [session, setSession] = useState(null);
-  const [user, setUser] = useState(null);
-  const [loadingAuth, setLoadingAuth] = useState(true);
+  const initialSession = readStoredSession();
+  const [session, setSession] = useState(initialSession);
+  const [user, setUser] = useState(initialSession?.user ?? null);
+  const [loadingAuth, setLoadingAuth] = useState(false);
   const prevLevel = useRef(levelFromXP(state.totalXP).level);
   // const hasMigrated = useRef(false);
 
