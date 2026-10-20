@@ -1,12 +1,12 @@
 import { useProductivity } from "../store/ProductivityContext";
 import { todayKey } from "../lib/questLogic";
 import { getTier, getTierColor, getTierBorderStyle } from "../lib/constants";
-import { ZapIcon } from "./icons";
+import { FlameIcon, ZapIcon } from "./icons";
 
 const SEGMENTS = 20;
 
 const Header = () => {
-  const { levelInfo, totalXP, dailyQuests, user } = useProductivity();
+  const { levelInfo, totalXP, dailyQuests, user, streak } = useProductivity();
 
   const today = todayKey();
   const todays = dailyQuests.filter((q) => q.date === today);
@@ -71,12 +71,27 @@ const Header = () => {
           </div>
         </div>
 
-        <div
-          className="flex items-center gap-2"
-          style={{ color: "var(--gold)" }}
-        >
-          <ZapIcon className="h-4 w-4" />
-          <span className="pixel text-[10px]">{totalXP} XP</span>
+        <div className="flex items-center gap-4">
+          <div
+            className="flex items-center gap-2"
+            style={{ color: "var(--ember)" }}
+            title={`Streak terbaik: ${streak.best} hari`}
+          >
+            <FlameIcon className="h-5 w-5" />
+            <div>
+              <p className="pixel text-[10px]">{streak.current} hari</p>
+              <p className="pixel text-[6px] uppercase" style={{ color: "var(--mute)" }}>
+                streak
+              </p>
+            </div>
+          </div>
+          <div
+            className="flex items-center gap-2"
+            style={{ color: "var(--gold)" }}
+          >
+            <ZapIcon className="h-4 w-4" />
+            <span className="pixel text-[10px]">{totalXP} XP</span>
+          </div>
         </div>
       </div>
 

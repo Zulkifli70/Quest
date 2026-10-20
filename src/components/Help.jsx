@@ -161,6 +161,12 @@ const Help = () => {
                     </div>
                   </li>
                   <li>
+                    <b>Streak Harian:</b> kerjakan minimal satu aktivitas
+                    (misi, kebiasaan, langkah tujuan) tiap hari untuk
+                    menaikkan streak di header. Bolong sehari membuat streak
+                    mulai dari 1 lagi, tapi rekor terbaik tetap tersimpan.
+                  </li>
+                  <li>
                     Membatalkan centang mengurangi XP yang sama — supaya tidak
                     bisa curang.
                   </li>

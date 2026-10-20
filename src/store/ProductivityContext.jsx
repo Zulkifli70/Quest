@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useMemo, useRef, useState } from "react";
 import { DEFAULT_STATE, QUEST_THEME } from "../lib/constants";
-import { uid, todayKey, levelFromXP } from "../lib/questLogic";
+import { advanceStreak, uid, todayKey, levelFromXP } from "../lib/questLogic";
 import { supabase } from "../lib/supabase";
 
 /* eslint-disable react-refresh/only-export-components */
@@ -181,7 +181,12 @@ export const ProductivityProvider = ({ children }) => {
             delta = q.completed ? -q.xpReward : q.xpReward;
             return { ...q, completed: !q.completed };
           });
-          return { ...s, dailyQuests, totalXP: Math.max(0, s.totalXP + delta) };
+          return {
+            ...s,
+            dailyQuests,
+            totalXP: Math.max(0, s.totalXP + delta),
+            streak: delta > 0 ? advanceStreak(s.streak, todayKey()) : s.streak,
+          };
         }),
 
       deleteDailyQuest: (id) =>
@@ -215,7 +220,12 @@ export const ProductivityProvider = ({ children }) => {
             gained = HABIT_XP;
             return { ...h, history: [...history, today] };
           });
-          return { ...s, habits, totalXP: s.totalXP + gained };
+          return {
+            ...s,
+            habits,
+            totalXP: s.totalXP + gained,
+            streak: gained > 0 ? advanceStreak(s.streak, today) : s.streak,
+          };
         }),
 
       deleteHabit: (id) =>
@@ -278,7 +288,12 @@ export const ProductivityProvider = ({ children }) => {
             if (!allDone && g.completed) delta -= g.xpReward;
             return { ...g, subtasks, completed: allDone };
           });
-          return { ...s, bigGoals, totalXP: Math.max(0, s.totalXP + delta) };
+          return {
+            ...s,
+            bigGoals,
+            totalXP: Math.max(0, s.totalXP + delta),
+            streak: delta > 0 ? advanceStreak(s.streak, todayKey()) : s.streak,
+          };
         }),
 
       deleteSubtask: (goalId, subtaskId) =>

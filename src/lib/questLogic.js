@@ -37,6 +37,18 @@ export const isAllDailyDone = (quests, habits, today) => {
   );
 };
 
+/* Streak naik sekali per hari aktif (misi selesai, habit check-in, atau
+   subtask dicentang). Bolong sehari current kembali ke 0 saat mulai lagi;
+   best tetap tersimpan. Uncheck tidak mengembalikan streak (disepakati). */
+export const advanceStreak = (streak, today) => {
+  if (streak.lastActiveDay === today) return streak;
+  const gap = streak.lastActiveDay
+    ? daysBetween(streak.lastActiveDay, today)
+    : null;
+  const current = gap === 1 ? streak.current + 1 : 1;
+  return { current, best: Math.max(streak.best || 0, current), lastActiveDay: today };
+};
+
 export const LEVEL_STEP = 100;
 const LEVEL_GROWTH = 50;
 

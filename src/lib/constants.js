@@ -55,4 +55,5 @@ export const DEFAULT_STATE = {
   totalXP: 0,
   level: 1,
   totalStreakDays: 0,
+  streak: { current: 0, best: 0, lastActiveDay: null },
 };
