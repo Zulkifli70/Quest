@@ -1,16 +1,54 @@
-# Productivity Quest
+# Zulk Quest ⚔️
 
-This template provides a minimal setup to get Productivity Quest working in Vite with HMR and some ESLint rules.
+App produktivitas bertema RPG pixel-art: selesaikan misi harian, bangun kebiasaan,
+dan tuntaskan tujuan besar untuk naik level.
 
-Currently, two official plugins are available:
+## Fitur
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- **Misi Harian** — tugas sekali jalan dengan XP sesuai kesulitan: Mudah 10, Sedang 25, Sulit 50 XP. Daftar direset tiap hari; hari-hari sebelumnya tetap bisa dilihat.
+- **Kebiasaan** — kegiatan berulang dengan target per minggu (3/5/7x), +8 XP per check-in. Bolong sehari tanpa hukuman.
+- **Tujuan Besar** — tujuan yang dirinci jadi langkah kecil (+5 XP per langkah) dengan bonus XP saat tuntas, lengkap dengan prioritas dan kategori.
+- **XP, Level & Tier** — 12 tier dari Recruit hingga Immortal, dengan warna dan border panel khusus per tier (lihat header).
+- **Streak Harian** 🔥 — kerjakan minimal satu aktivitas per hari untuk menaikkan streak di header; rekor terbaik tetap tersimpan walau bolong.
+- **Notifikasi** — pesan penyemangat acak (gaya gaul) tiap aksi, dan layar level-up saat naik level.
+- **Tema** — gelap (default) dan terang "perkamen", bisa diganti dari header.
+- **Sinkronisasi** — data tersimpan otomatis di localStorage dan Supabase (per user), lintas perangkat dengan login.
 
-## React Compiler
+## Teknologi
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- [React 19](https://react.dev) + [Vite](https://vite.dev)
+- [Tailwind CSS 4](https://tailwindcss.com) + design system pixel-RPG (`design.md`)
+- [Supabase](https://supabase.com) — auth dan sinkronisasi state per user (`state_json`)
+- [Vitest](https://vitest.dev) untuk unit test logika XP/streak
 
-## Expanding the ESLint configuration
+## Mulai
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+```bash
+npm install
+npm run dev      # jalankan dev server
+npm run build    # build produksi ke dist/
+npm run test     # unit test (vitest)
+npm run lint     # eslint
+```
+
+## Setup Supabase
+
+1. Buat project di [supabase.com](https://supabase.com), lalu aktifkan email/password auth.
+2. Jalankan SQL setup dari `db_setup.sql` (tabel `user_state`, RLS, RPC `award_xp`).
+3. Isi URL dan anon key di `src/lib/supabase.js`.
+
+## Struktur
+
+```
+src/
+  components/       # UI per tab (DailyQuests, Habits, BigGoals, Header, ...)
+  lib/              # logika murni: questLogic (XP, level, streak), constants (tier), celebrations
+  store/            # ProductivityContext — state global + sinkronisasi Supabase
+db_setup.sql        # SQL setup Supabase
+design.md           # design system pixel-RPG (token, prinsip, komponen)
+```
+
+## Panduan Memakai
+
+Tekan tombol **?** di pojok app untuk panduan lengkap di dalam app — cara menambah
+misi/kebiasaan/tujuan, aturan XP, daftar tier level, dan tombol reset data.
