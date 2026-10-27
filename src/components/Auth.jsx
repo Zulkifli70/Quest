@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useProductivity } from "../store/ProductivityContext";
 
 const Auth = () => {
-  const { login, register, notify } = useProductivity();
+  const { login, register, loginDemo, notify } = useProductivity();
   const [mode, setMode] = useState("login");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -87,6 +87,17 @@ const Auth = () => {
               </span>
             </button>
           </form>
+
+          <div className="mt-3">
+            <button 
+              className="btn w-full py-2 border text-center pixel text-[8px]" 
+              style={{ borderColor: "var(--gold)", color: "var(--gold)", background: "transparent" }}
+              type="button"
+              onClick={loginDemo}
+            >
+              Coba Akun Demo
+            </button>
+          </div>
 
           <div className="mt-3 text-center text-[14px]" style={{ color: "var(--mute)" }}>
             {mode === "login" ? (

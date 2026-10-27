@@ -6,7 +6,7 @@ import { FlameIcon, ZapIcon } from "./icons";
 const SEGMENTS = 20;
 
 const Header = () => {
-  const { levelInfo, totalXP, dailyQuests, user, streak } = useProductivity();
+  const { levelInfo, totalXP, dailyQuests, user, streak, isDemo } = useProductivity();
 
   const today = todayKey();
   const todays = dailyQuests.filter((q) => q.date === today);
@@ -21,7 +21,7 @@ const Header = () => {
 
   const filled = Math.round((levelInfo.current / levelInfo.needed) * SEGMENTS);
 
-  const username = user.email.split("@")[0];
+  const username = isDemo ? "Demo User" : (user?.email ? user.email.split("@")[0] : "");
 
   return (
     <header

@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useMemo, useRef, useState } from "react";
 import { DEFAULT_STATE, QUEST_THEME } from "../lib/constants";
 import { advanceStreak, uid, todayKey, levelFromXP } from "../lib/questLogic";
+import { DEMO_INITIAL_STATE } from "../lib/demoData";
 import { supabase } from "../lib/supabase";
 
 /* eslint-disable react-refresh/only-export-components */
@@ -57,17 +58,19 @@ export const ProductivityProvider = ({ children }) => {
   const initialSession = readStoredSession();
   const [session, setSession] = useState(initialSession);
   const [user, setUser] = useState(initialSession?.user ?? null);
+  const [isDemo, setIsDemo] = useState(() => localStorage.getItem("zq-is-demo") === "true");
   const [loadingAuth, setLoadingAuth] = useState(false);
   const prevLevel = useRef(levelFromXP(state.totalXP).level);
   // const hasMigrated = useRef(false);
 
   useEffect(() => {
+    if (isDemo) return;
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
     } catch {
       /* ignore */
     }
-  }, [state]);
+  }, [state, isDemo]);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -99,6 +102,7 @@ export const ProductivityProvider = ({ children }) => {
   }, [state.totalXP]);
 
   useEffect(() => {
+    if (isDemo) return;
     const loadRemote = async () => {
       if (!user) return;
       const { data, error } = await supabase
@@ -132,8 +136,8 @@ export const ProductivityProvider = ({ children }) => {
   }, [user]);
 
   useEffect(() => {
+    if (isDemo || !user) return;
     const syncRemote = async () => {
-      if (!user) return;
       try {
         await supabase
           .from("user_state")
@@ -317,22 +321,41 @@ export const ProductivityProvider = ({ children }) => {
       login: async (emailOrUsername, password) => {
         const t = emailOrUsername.trim().toLowerCase();
         const email = t.includes("@") ? t : `${t.replace(/[^a-z0-9._-]/g, "")}@local.zq`;
+        setIsDemo(false);
+        localStorage.removeItem("zq-is-demo");
         return supabase.auth.signInWithPassword({ email, password });
       },
 
       register: async (emailOrUsername, password) => {
         const t = emailOrUsername.trim().toLowerCase();
         const email = t.includes("@") ? t : `${t.replace(/[^a-z0-9._-]/g, "")}@local.zq`;
+        setIsDemo(false);
+        localStorage.removeItem("zq-is-demo");
         return supabase.auth.signUp({ email, password });
       },
 
+      loginDemo: () => {
+        setIsDemo(true);
+        localStorage.setItem("zq-is-demo", "true");
+        setState(normalizeState(DEMO_INITIAL_STATE));
+        setUser({ id: "demo-user", email: "demo@productivity.quest" });
+      },
+
       logout: async () => {
+        if (isDemo) {
+          setIsDemo(false);
+          localStorage.removeItem("zq-is-demo");
+          setUser(null);
+          setState({ ...DEFAULT_STATE });
+          return;
+        }
         await supabase.auth.signOut();
       },
 
       session,
       user,
-      isAuthed: !!user,
+      isAuthed: !!user || isDemo,
+      isDemo,
       loadingAuth,
     };
   }, [state, toast, levelUp, session, user, loadingAuth]);
