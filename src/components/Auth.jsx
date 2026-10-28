@@ -12,7 +12,7 @@ const Auth = () => {
     e.preventDefault();
     const cleanUser = username.trim();
     if (!cleanUser || !password) return;
-    
+
     if (mode === "register" && password.length < 6) {
       notify("Password minimal 6 karakter.");
       return;
@@ -48,16 +48,25 @@ const Auth = () => {
         }}
       >
         <div className="panel">
-          <h1 className="pixel text-[12px] text-center" style={{ color: "var(--gold)" }}>
+          <h1
+            className="pixel text-[12px] text-center"
+            style={{ color: "var(--gold)" }}
+          >
             Productivity Quest
           </h1>
-          <p className="mt-2 text-center text-[14px]" style={{ color: "var(--mute)" }}>
+          <p
+            className="mt-2 text-center text-[14px]"
+            style={{ color: "var(--mute)" }}
+          >
             {mode === "login" ? "Masuk untuk lanjut" : "Buat akun baru"}
           </p>
 
           <form className="mt-4 flex flex-col gap-3" onSubmit={handleSubmit}>
             <div>
-              <label className="pixel text-[8px]" style={{ color: "var(--mute)" }}>
+              <label
+                className="pixel text-[8px]"
+                style={{ color: "var(--mute)" }}
+              >
                 Username/Email
               </label>
               <input
@@ -69,7 +78,10 @@ const Auth = () => {
               />
             </div>
             <div>
-              <label className="pixel text-[8px]" style={{ color: "var(--mute)" }}>
+              <label
+                className="pixel text-[8px]"
+                style={{ color: "var(--mute)" }}
+              >
                 Password
               </label>
               <input
@@ -78,20 +90,35 @@ const Auth = () => {
                 style={{ borderColor: "var(--gold-d)", color: "var(--text)" }}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                autoComplete={mode === "login" ? "current-password" : "new-password"}
+                autoComplete={
+                  mode === "login" ? "current-password" : "new-password"
+                }
               />
             </div>
-            <button className="btn btn-primary mt-2" type="submit" disabled={loading}>
+            <button
+              className="btn btn-primary mt-2"
+              type="submit"
+              disabled={loading}
+            >
               <span className="pixel text-[8px]">
-                {loading ? "Loading..." : mode === "login" ? "Login" : "Register"}
+                {loading
+                  ? "Loading..."
+                  : mode === "login"
+                    ? "Login"
+                    : "Register"}
               </span>
             </button>
           </form>
 
           <div className="mt-3">
-            <button 
-              className="btn w-full py-2 border text-center pixel text-[8px]" 
-              style={{ borderColor: "var(--gold)", color: "var(--gold)", background: "transparent" }}
+            <button
+              className="btn w-full py-2 border pixel text-center"
+              style={{
+                borderColor: "var(--gold)",
+                color: "var(--gold)",
+                background: "transparent",
+                fontSize: "8px",
+              }}
               type="button"
               onClick={loginDemo}
             >
@@ -99,7 +126,10 @@ const Auth = () => {
             </button>
           </div>
 
-          <div className="mt-3 text-center text-[14px]" style={{ color: "var(--mute)" }}>
+          <div
+            className="mt-3 text-center text-[14px]"
+            style={{ color: "var(--mute)" }}
+          >
             {mode === "login" ? (
               <button
                 className="underline"
