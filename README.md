@@ -13,6 +13,7 @@ dan tuntaskan tujuan besar untuk naik level.
 - **Notifikasi** — pesan penyemangat acak (gaya gaul) tiap aksi, dan layar level-up saat naik level.
 - **Tema** — gelap (default) dan terang "perkamen", bisa diganti dari header.
 - **Sinkronisasi** — data tersimpan otomatis di localStorage dan Supabase (per user), lintas perangkat dengan login.
+- **Akun Demo** — tombol "Coba Akun Demo" di layar login untuk mencoba semua fitur dengan data contoh; perubahan hanya berlaku di sesi itu, tidak disimpan ke localStorage maupun Supabase.
 
 ## Teknologi
 
@@ -43,6 +44,7 @@ npm run lint     # eslint
 src/
   components/       # UI per tab (DailyQuests, Habits, BigGoals, Header, ...)
   lib/              # logika murni: questLogic (XP, level, streak), constants (tier), celebrations
+  lib/demoData.js   # state awal akun demo (data contoh, tidak tersentuh DB)
   store/            # ProductivityContext — state global + sinkronisasi Supabase
 db_setup.sql        # SQL setup Supabase
 design.md           # design system pixel-RPG (token, prinsip, komponen)
@@ -52,3 +54,6 @@ design.md           # design system pixel-RPG (token, prinsip, komponen)
 
 Tekan tombol **?** di pojok app untuk panduan lengkap di dalam app — cara menambah
 misi/kebiasaan/tujuan, aturan XP, daftar tier level, dan tombol reset data.
+
+Ingin lihat app sebelum daftar? Klik **Coba Akun Demo** di layar login — semuanya
+bisa diutak-atik, dan data demo tidak akan tersimpan.
